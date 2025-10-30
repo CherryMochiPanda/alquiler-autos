@@ -1,77 +1,69 @@
 <template>
   <nav class="navbar">
-    <h1>AutoRent</h1>
-    <button class="hamburger" @click="menuOpen = !menuOpen">☰</button>
-    <ul :class="{ open: menuOpen }">
-      <li><router-link to="/">Inicio</router-link></li>
-      <li><router-link to="/catalogo">Catálogo</router-link></li>
-      <li><router-link to="/reserva">Reservar</router-link></li>
-    </ul>
-    <button @click="toggleDark" class="modo-btn">🌓</button>
+    <div class="nav-content">
+      <h1>AutoRent</h1>
+      <ul>
+        <li><router-link to="/">Inicio</router-link></li>
+        <li><router-link to="/catalogo">Catálogo</router-link></li>
+        <li><router-link to="/reserva">Reservar</router-link></li>
+      </ul>
+      <button @click="toggleDark" class="modo-btn">🌓</button>
+    </div>
   </nav>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-const menuOpen = ref(false)
-
 const toggleDark = () => {
   document.documentElement.classList.toggle('dark')
 }
 </script>
 
 <style scoped>
-.navbar {    
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  background-color: var(--accent-color);
-  color: var(--text-color);
-  padding: 1rem;
+.navbar {
+  width: 100vw;
+  box-sizing: border-box;  
+  padding: 0.5rem 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  background-color: var(--nav-bg);
+  border-bottom: 1px solid var(--divider-color);
 }
 
-.hamburger {
-  display: block;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: var(--text-color);
-  cursor: pointer;
+.nav-content {
+  width: 100%;
+  margin: 0; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 ul {
-  width: 100%;
-  display: none;
-  flex-direction: column;
-  gap: 1rem;
-  list-style: none;
-  margin-top: 1rem;
-  padding-left: 0;
-}
-
-ul.open {
   display: flex;
+  gap: 1.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 ul li a {
   color: var(--text-color);
   text-decoration: none;
-  font-weight: bold;
+  font-weight: 500;
+  transition: color 0.3s ease;
 }
 
-@media (min-width: 768px) {
-  .hamburger {
-    display: none;
-  }
+ul li a:hover {
+  color: var(--accent-color);
+}
 
-  ul {
-    display: flex !important;
-    flex-direction: row;
-    width: auto;
-    margin-top: 0;
-    gap: 2rem;
-  }
+.modo-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--accent-color);
+  cursor: pointer;
+  box-shadow: var(--neon-shadow);
 }
 </style>
