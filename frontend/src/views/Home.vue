@@ -27,33 +27,80 @@
     <p>Sin cargos ocultos. Lo que ves es lo que pagas, siempre.</p>
   </div>
   </section>
-  <section class="how-it-works">
+  <section class="timeline-loop">
   <h2>¿Cómo funciona?</h2>
-  <div class="steps">
-    <div class="step">
-      <font-awesome-icon :icon="['fas', 'search']" class="icon" />
-      <h3>Explora el catálogo</h3>
-      <p>Encuentra el auto perfecto para tu viaje.</p>
+  <div class="timeline-container">
+    <div class="timeline-line"></div>
+    <div class="timeline-steps">
+      <div class="step" id="step1">
+        <div class="circle">1</div>
+        <h3>Explora el catálogo</h3>
+      </div>
+      <div class="step" id="step2">
+        <div class="circle">2</div>
+        <h3>Elige fechas</h3>
+      </div>
+      <div class="step" id="step3">
+        <div class="circle">3</div>
+        <h3>Confirma tu reserva</h3>
+      </div>
+      <div class="step" id="step4">
+        <div class="circle">4</div>
+        <h3>¡Disfruta tu auto!</h3>
+      </div>
     </div>
-    <div class="step">
-      <font-awesome-icon :icon="['fas', 'calendar-check']" class="icon" />
-      <h3>Elige fechas</h3>
-      <p>Selecciona cuándo y dónde lo necesitas.</p>
+  </div>
+  </section>
+  <section class="featured-cars">
+  <h2>Autos destacados</h2>
+  <div class="car-grid">
+    <div class="car-card">
+      <div class="image-placeholder">
+      <!-- Aquí puedes poner un <img> o un <video> o un <iframe> más adelante -->
+      <span>Imagen o GIF aquí</span>
+      <h3>Sedán Clásico</h3>
+      <p>Ideal para ciudad y viajes cortos.</p>
+      <button>Reservar</button>
+      </div>
     </div>
-    <div class="step">
-      <font-awesome-icon :icon="['fas', 'clipboard-check']" class="icon" />
-      <h3>Confirma tu reserva</h3>
-      <p>Revisa los detalles y confirma en segundos.</p>
+    <div class="car-card">
+      <div class="image-placeholder">
+      <!-- Aquí puedes poner un <img> o un <video> o un <iframe> más adelante -->
+      <span>Imagen o GIF aquí</span>
+      <h3>SUV Familiar</h3>
+      <p>Espacio y comodidad para toda la familia.</p>
+      <button>Reservar</button>
+      </div>
     </div>
-    <div class="step">
-      <font-awesome-icon :icon="['fas', 'car-side']" class="icon" />
-      <h3>¡Disfruta tu auto!</h3>
-      <p>Recoge tu vehículo y comienza tu aventura.</p>
+    <div class="car-card">
+      <div class="image-placeholder">
+      <!-- Aquí puedes poner un <img> o un <video> o un <iframe> más adelante -->
+      <span>Imagen o GIF aquí</span>
+      <h3>Auto Deportivo</h3>
+      <p>Potencia y estilo para los que buscan adrenalina.</p>
+      <button>Reservar</button>
+      </div>
+    </div>
+  </div>
+  </section>
+  <section class="testimonials">
+  <h2>Lo que dicen nuestros clientes</h2>
+  <div class="testimonial-grid">
+    <div class="testimonial">
+      <p>“AutoRent me salvó en mi viaje a Varadero. El proceso fue rápido y el auto estaba impecable.”</p>
+      <h4>— Laura G.</h4>
+    </div>
+    <div class="testimonial">
+      <p>“Reservé desde mi celular en 5 minutos. ¡Muy fácil y sin sorpresas!”</p>
+      <h4>— Ernesto P.</h4>
+    </div>
+    <div class="testimonial">
+      <p>“Excelente atención y variedad de autos. Recomiendo AutoRent a todos mis amigos.”</p>
+      <h4>— Yanelis M.</h4>
     </div>
   </div>
   </section>
 </template>
-
 <style scoped>
 .hero {
   background: var(--bg-color);
@@ -226,6 +273,159 @@ p {
   line-height: 1.4;
 }
 
+.timeline-loop {
+  padding: 4rem 2rem;
+  text-align: center;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.timeline-loop h2 {
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+  color: var(--accent-color);
+}
+
+.timeline-steps {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+}
+
+.step {
+  width: 200px;
+  padding: 2rem 1rem;
+  font-size: 1rem;
+  border-radius: 16px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--divider-color);
+  backdrop-filter: blur(10px);
+  text-align: center;
+  transform: scale(1);
+  box-shadow: none;
+  animation: pulseStep 8s infinite;
+}
+
+.step h3 {
+  font-size: 1.2rem;
+  margin-top: 0.5rem;
+  color: var(--text-color);
+}
+
+.circle {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  border: 3px solid var(--accent-color);
+  color: var(--accent-color);
+  font-weight: bold;
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.timeline-container {
+  position: relative;
+  padding: 2rem 0;
+  overflow: hidden;
+}
+
+
+.timeline-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 4px;
+  background-color: var(--accent-color);
+  width: 0%;
+  animation: growLine 8s linear infinite;
+  z-index: 0;
+}
+
+@keyframes growLine {
+  0% {
+    width: 0%;
+  }
+  25% {
+    width: 25%;
+  }
+  50% {
+    width: 50%;
+  }
+  75% {
+    width: 75%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+
+@keyframes lineProgress {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.timeline-steps {
+  display: flex;
+  justify-content: space-around;
+  position: relative;
+  z-index: 1;
+}
+
+
+
+/* Animación base */
+@keyframes pulseStep {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: none;
+  }
+  10% {
+    transform: scale(1.2);
+    box-shadow: 0 0 20px var(--accent-color);
+  }
+  20% {
+    transform: scale(1);
+    box-shadow: none;
+  }
+}
+
+/* Delays para que se activen en orden */
+#step1 {
+  animation-delay: 0s;
+}
+#step2 {
+  animation-delay: 2s;
+}
+#step3 {
+  animation-delay: 4s;
+}
+#step4 {
+  animation-delay: 6s;
+}
+
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0px var(--accent-color);
+  }
+  50% {
+    box-shadow: 0 0 20px var(--accent-color);
+  }
+  100% {
+    box-shadow: 0 0 0px var(--accent-color);
+  }
+}
+
+
 
 @keyframes moveGlow {
   0% {
@@ -251,6 +451,136 @@ p {
     border-color: #00f0ff;
   }
 }
+
+.featured-cars {
+  padding: 4rem 2rem;
+  text-align: center;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.featured-cars h2 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: var(--accent-color);
+}
+
+.car-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.car-card {
+  width: 320px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--divider-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  font-size: 1rem;
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease;
+}
+
+.car-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 15px var(--accent-color);
+}
+
+.car-card img {
+  width: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.car-card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.car-card p {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.car-card button {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.car-card button:hover {
+  background-color: #00c0ff;
+}
+
+.testimonials {
+  padding: 4rem 2rem;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  text-align: center;
+}
+
+.testimonials h2 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: var(--accent-color);
+}
+
+.testimonial-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.testimonial p {
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+
+.testimonial {
+  max-width: 300px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--divider-color);
+  border-radius: 12px;
+  padding: 2rem;
+  font-style: italic;
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease;
+}
+
+.testimonial:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 15px var(--accent-color);
+}
+
+.testimonial h4 {
+  margin-top: 1rem;
+  font-weight: bold;
+  color: var(--accent-color);
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 180px;
+  background-color: #2c2c2c;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 0.9rem;
+  font-style: italic;
+  border: 1px dashed var(--accent-color);
+}
+
 
 </style>
 
