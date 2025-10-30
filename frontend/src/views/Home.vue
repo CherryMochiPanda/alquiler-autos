@@ -10,6 +10,48 @@
       </div>
     </div>
   </section>
+  <section class="features">
+  <div class="feature">
+    <font-awesome-icon :icon="['fas', 'car']" class="icon" />
+    <h3>Variedad de Autos</h3>
+    <p>Desde compactos hasta SUVs, tenemos el vehículo perfecto para cada ocasión.</p>
+  </div>
+  <div class="feature">
+    <font-awesome-icon :icon="['fas', 'bolt']" class="icon" />
+    <h3>Reservas Rápidas</h3>
+    <p>Proceso simple, sin complicaciones. Reserva en minutos desde cualquier dispositivo.</p>
+  </div>
+  <div class="feature">
+    <font-awesome-icon :icon="['fas', 'money-bill-wave']" class="icon" />
+    <h3>Precios Transparentes</h3>
+    <p>Sin cargos ocultos. Lo que ves es lo que pagas, siempre.</p>
+  </div>
+  </section>
+  <section class="how-it-works">
+  <h2>¿Cómo funciona?</h2>
+  <div class="steps">
+    <div class="step">
+      <font-awesome-icon :icon="['fas', 'search']" class="icon" />
+      <h3>Explora el catálogo</h3>
+      <p>Encuentra el auto perfecto para tu viaje.</p>
+    </div>
+    <div class="step">
+      <font-awesome-icon :icon="['fas', 'calendar-check']" class="icon" />
+      <h3>Elige fechas</h3>
+      <p>Selecciona cuándo y dónde lo necesitas.</p>
+    </div>
+    <div class="step">
+      <font-awesome-icon :icon="['fas', 'clipboard-check']" class="icon" />
+      <h3>Confirma tu reserva</h3>
+      <p>Revisa los detalles y confirma en segundos.</p>
+    </div>
+    <div class="step">
+      <font-awesome-icon :icon="['fas', 'car-side']" class="icon" />
+      <h3>¡Disfruta tu auto!</h3>
+      <p>Recoge tu vehículo y comienza tu aventura.</p>
+    </div>
+  </div>
+  </section>
 </template>
 
 <style scoped>
@@ -93,6 +135,97 @@ p {
   border: 2px solid var(--accent-color);
   color: var(--accent-color);
 }
+
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  padding: 4rem 2rem;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.feature {
+  flex: 1 1 250px;
+  max-width: 300px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--divider-color);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease;
+}
+
+.feature:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 15px var(--accent-color);
+}
+
+.feature h3 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--accent-color);
+}
+
+.feature p {
+  font-size: 1.5rem;
+  line-height: 1.5;
+}
+
+.icon {
+  font-size: 2.5rem;
+  color: var(--accent-color);
+  margin-bottom: 1rem;
+}
+
+.how-it-works {
+  padding: 4rem 2rem;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  text-align: center;
+}
+
+.how-it-works h2 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: var(--accent-color);
+}
+
+.steps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.step {
+  flex: 1 1 220px;
+  max-width: 250px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--divider-color);
+  border-radius: 12px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease;
+}
+
+.step:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 15px var(--accent-color);
+}
+
+.step h3 {
+  font-size: 1.2rem;
+  margin: 1rem 0 0.5rem;
+}
+
+.step p {
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
 
 @keyframes moveGlow {
   0% {
