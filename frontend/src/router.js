@@ -4,9 +4,9 @@ import Catalogo from './views/Catalogo.vue';
 import Reserva from './views/Reserva.vue';
 
 const routes = [
-    { path: '/', component: Home },
-    { path: '/catalogo', component: Catalogo },
-    { path: '/reserva', component: Reserva },
+  { path: '/', component: Home },
+  { path: '/catalogo', component: Catalogo },
+  { path: '/reserva', component: Reserva }
 ]
 
 const router = createRouter({
