@@ -55,31 +55,22 @@
   <h2>Autos destacados</h2>
   <div class="car-grid">
     <div class="car-card">
-      <div class="image-placeholder">
-      <!-- Aquí puedes poner un <img> o un <video> o un <iframe> más adelante -->
-      <span>Imagen o GIF aquí</span>
+      <img src="/img/autos/sedan-clasico.jpg" alt="Sedán clásico" />
       <h3>Sedán Clásico</h3>
       <p>Ideal para ciudad y viajes cortos.</p>
       <button>Reservar</button>
-      </div>
     </div>
     <div class="car-card">
-      <div class="image-placeholder">
-      <!-- Aquí puedes poner un <img> o un <video> o un <iframe> más adelante -->
-      <span>Imagen o GIF aquí</span>
+      <img src="/img/autos/suv-familiar.jpg" alt="Sedán clásico" />
       <h3>SUV Familiar</h3>
       <p>Espacio y comodidad para toda la familia.</p>
       <button>Reservar</button>
-      </div>
     </div>
     <div class="car-card">
-      <div class="image-placeholder">
-      <!-- Aquí puedes poner un <img> o un <video> o un <iframe> más adelante -->
-      <span>Imagen o GIF aquí</span>
+      <img src="/img/autos/deportivo.jpg" alt="Sedán clásico" />
       <h3>Auto Deportivo</h3>
       <p>Potencia y estilo para los que buscan adrenalina.</p>
       <button>Reservar</button>
-      </div>
     </div>
   </div>
   </section>
@@ -473,7 +464,7 @@ p {
 }
 
 .car-card {
-  width: 320px;
+  width: 450px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--divider-color);
   border-radius: 12px;
@@ -489,7 +480,7 @@ p {
 }
 
 .car-card img {
-  width: 200px;
+  width: 400px;
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: 1rem;
@@ -506,9 +497,9 @@ p {
 }
 
 .car-card button {
-  background-color: var(--accent-color);
-  color: white;
-  border: none;
+  background-color: transparent;
+  border: 2px solid var(--accent-color);
+  color: var(--accent-color);
   padding: 0.6rem 1.2rem;
   border-radius: 6px;
   cursor: pointer;
@@ -517,6 +508,7 @@ p {
 
 .car-card button:hover {
   background-color: #00c0ff;
+  color: #000000;
 }
 
 .testimonials {
@@ -580,8 +572,6 @@ p {
   font-style: italic;
   border: 1px dashed var(--accent-color);
 }
-
-
 </style>
 
 
