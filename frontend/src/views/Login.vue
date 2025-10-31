@@ -6,7 +6,7 @@
         <input type="email" v-model="email" placeholder="Correo electrónico" :class="{ error: emailError }" />
         <div class="password-field">
   <input :type="showPassword ? 'text' : 'password'" v-model="password" placeholder="Contraseña" />
-  <button type="button" @click="showPassword = !showPassword">
+  <button type="button" @click="showPassword = !showPassword" class="icon-button">
     <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
   </button>
 </div>
@@ -52,7 +52,7 @@ function handleLogin() {
   padding-right: 2.5rem;
 }
 
-.password-field button {
+.icon-button {
   position: absolute;
   right: 0.5rem;
   background: none;
@@ -62,13 +62,17 @@ function handleLogin() {
   cursor: pointer;
 }
 
+.icon-button i {
+  pointer-events: none;
+}
+
 
 .auth-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
+  background: var(--color-wrapper);
   padding: 2rem;
 }
 
@@ -80,7 +84,7 @@ function handleLogin() {
   border-radius: 16px;
   padding: 2rem;
   backdrop-filter: blur(12px);
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+  box-shadow: 0 0 20px var(--color-sombra);
   color: #fff;
   animation: fadeIn 0.6s ease;
 }
@@ -89,7 +93,7 @@ function handleLogin() {
   text-align: center;
   margin-bottom: 1.5rem;
   font-size: 2rem;
-  color: #00ffff;
+  color: var(--accent-color);
 }
 
 .auth-box form {
@@ -102,14 +106,14 @@ function handleLogin() {
   padding: 0.8rem;
   border-radius: 8px;
   border: none;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background-color:var(--color-caja);
+  color: var(--text-color);
   font-size: 1rem;
   transition: border 0.3s ease;
 }
 
 .auth-box input::placeholder {
-  color: #ccc;
+  color: var(--color-Tgrand);
 }
 
 .auth-box input.error {
@@ -118,8 +122,8 @@ function handleLogin() {
 
 .auth-box button {
   padding: 0.8rem;
-  background-color: #00ffff;
-  color: #000;
+  background-color: var(--accent-color);
+  color: #ffffff;
   border: none;
   border-radius: 8px;
   font-weight: bold;
@@ -135,7 +139,7 @@ function handleLogin() {
 .switch-link {
   text-align: center;
   margin-top: 1rem;
-  color: #ccc;
+  color: var(--color-Tgrand);
   cursor: pointer;
   font-size: 0.9rem;
   transition: color 0.3s ease;

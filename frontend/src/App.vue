@@ -22,14 +22,24 @@ import Footer from './components/Footer.vue'
   --bg-color: #ffffff;
   --text-color: #000000;
   --accent-color: #0077cc;
+  --color-wrapper:linear-gradient(to bottom right, #fcfeff, #d2f1ff, #e9d7ff);
+  --color-Tgrand: #6a6a6a;
+  --color-caja: #fff2fdc6;
+  --color-sombra:rgba(17, 126, 126, 0.392);
+  --box-bg: rgba(255, 255, 255, 0.8);
   --neon-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff;
 }
 
 .dark {
-  --divider-color: rgba(255, 255, 255, 0.2); 
+  --divider-color:  rgba(255, 255, 255, 0.1); 
   --bg-color: #121212;
   --text-color: #f0f0f0;
   --accent-color: #00f0ff;
+  --color-wrapper:linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
+  --color-Tgrand: #ccc;
+  --color-caja: rgba(255, 255, 255, 0.1);
+  --color-sombra:rgba(0, 255, 255, 0.1);
+  --box-bg: rgba(255, 255, 255, 0.05);
   --neon-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff;
 }
 
