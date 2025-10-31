@@ -6,6 +6,9 @@
         <li><router-link to="/">Inicio</router-link></li>
         <li><router-link to="/catalogo">Catálogo</router-link></li>
         <li><router-link to="/reserva">Reservar</router-link></li>
+        <li><router-link to="/login">Iniciar sesión</router-link></li>
+        <li><router-link to="/signup">Crear cuenta</router-link></li>
+
       </ul>
       <button @click="toggleDark" class="modo-btn">🌓</button>
     </div>
