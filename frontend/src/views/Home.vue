@@ -6,7 +6,7 @@
       <p>Tu viaje comienza aquí. Renta el auto ideal con un solo clic.</p>
       <div class="hero-buttons">
         <router-link to="/catalogo" class="btn">Ver Catálogo</router-link>
-        <router-link to="/reserva" class="btn alt">Reservar Ahora</router-link>
+        <router-link to="/reservar" class="btn alt">Reservar Ahora</router-link>
       </div>
     </div>
   </section>
@@ -573,5 +573,3 @@ p {
   border: 1px dashed var(--accent-color);
 }
 </style>
-
-

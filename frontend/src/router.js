@@ -9,9 +9,13 @@ import Signup from './views/Signup.vue';
 const routes = [
   { path: '/', component: Home },
   { path: '/catalogo', component: Catalogo },
+<<<<<<< Updated upstream
   { path: '/reserva', component: Reserva },
   { path: '/login', component: Login },
   { path: '/signup', component: Signup }
+=======
+  { path: '/reservar', component: Reserva }
+>>>>>>> Stashed changes
 ]
 
 const router = createRouter({
