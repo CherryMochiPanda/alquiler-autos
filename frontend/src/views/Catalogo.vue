@@ -1,3 +1,24 @@
+<script setup>
+import { ref } from 'vue'
+import { autos } from '../data/autos'
+
+
+const imagenActual = ref({})
+autos.forEach(auto => {
+  imagenActual.value[auto.id] = 0
+})
+
+function siguiente(id) {
+  const total = autos.find(a => a.id === id).imagenes.length
+  imagenActual.value[id] = (imagenActual.value[id] + 1) % total
+}
+
+function anterior(id) {
+  const total = autos.find(a => a.id === id).imagenes.length
+  imagenActual.value[id] = (imagenActual.value[id] - 1 + total) % total
+}
+</script>
+
 <template>
   <section class="catalogo-wrapper">
     <h2>Bienvenido a la página de Catálogo</h2>
@@ -15,52 +36,14 @@
         </div>
         <h3>{{ auto.nombre }}</h3>
         <p>{{ auto.descripcion }}</p>
-        <button @click="$router.push({ path: '/reservar', query: { auto: auto.id } })">
-          Reservar
-        </button>
+        <div class="card-buttons">
+          <button @click="$router.push({ path: '/detalle-auto', query: { auto: auto.id } })">Ver detalles</button>
+          <button @click="$router.push({ path: '/reservar', query: { auto: auto.id } })">Reservar</button>
+        </div>
       </div>
     </div>
   </section>
 </template>
-
-<script setup>
-import { ref } from 'vue'
-
-const autos = [
-  {
-    id: 'sedan',
-    nombre: 'Sedán Clásico',
-    carpeta: 'sedan-toyota',
-    imagenes: [
-      'toyota-corola-LE-2021-p1.webp',
-      'toyota-corola-LE-2021-p2.webp',
-      'toyota-corola-LE-2021-p3.webp',
-      'toyota-corola-LE-2021-p4.webp',
-      'toyota-corola-LE-2021-p5.webp'
-    ],
-    motor: '1.8L',
-    transmision: 'Automático',
-    capacidad: 5,
-    extras: 'Aire acondicionado, Bluetooth',
-    descripcion: 'Ideal para ciudad y viajes cortos.'
-  }
-]
-
-const imagenActual = ref({})
-autos.forEach(auto => {
-  imagenActual.value[auto.id] = 0
-})
-
-function siguiente(id) {
-  const total = autos.find(a => a.id === id).imagenes.length
-  imagenActual.value[id] = (imagenActual.value[id] + 1) % total
-}
-
-function anterior(id) {
-  const total = autos.find(a => a.id === id).imagenes.length
-  imagenActual.value[id] = (imagenActual.value[id] - 1 + total) % total
-}
-</script>
 
 <style scoped>
 .catalogo-wrapper {
@@ -85,23 +68,6 @@ function anterior(id) {
   backdrop-filter: blur(10px);
   box-shadow: var(--neon-shadow);
   text-align: center;
-}
-
-.car-card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.car-card button {
-  margin-top: 1rem;
-  background-color: var(--accent-color);
-  color: #000;
-  border: none;
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
-  cursor: pointer;
 }
 
 .car-carousel {
@@ -135,6 +101,23 @@ function anterior(id) {
   padding: 0.5rem 1rem;
   cursor: pointer;
   border-radius: 4px;
+}
+
+.card-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.card-buttons button {
+  background-color: var(--accent-color);
+  color: #000;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
 }
 </style>
 

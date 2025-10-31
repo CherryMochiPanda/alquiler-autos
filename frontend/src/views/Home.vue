@@ -58,19 +58,19 @@
       <img src="/img/autos/sedan-clasico.jpg" alt="Sedán clásico" />
       <h3>Sedán Clásico</h3>
       <p>Ideal para ciudad y viajes cortos.</p>
-      <button>Reservar</button>
+      <button>Ver</button>
     </div>
     <div class="car-card">
       <img src="/img/autos/suv-familiar.jpg" alt="Sedán clásico" />
       <h3>SUV Familiar</h3>
       <p>Espacio y comodidad para toda la familia.</p>
-      <button>Reservar</button>
+      <button>Ver</button>
     </div>
     <div class="car-card">
       <img src="/img/autos/deportivo.jpg" alt="Sedán clásico" />
       <h3>Auto Deportivo</h3>
       <p>Potencia y estilo para los que buscan adrenalina.</p>
-      <button>Reservar</button>
+      <button>Ver</button>
     </div>
   </div>
   </section>

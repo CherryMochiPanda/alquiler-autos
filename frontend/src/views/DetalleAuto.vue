@@ -1,0 +1,165 @@
+<template>
+  <div v-if="autoSeleccionado" class="detalle-auto">
+    <h2>{{ autoSeleccionado.nombre }}</h2>
+
+    <div class="carousel">
+      <img
+        :src="`/img/autos/${autoSeleccionado.carpeta}/${autoSeleccionado.imagenes[imagenActual]}`"
+        :alt="`Vista ${imagenActual + 1}`"
+      />
+      <div class="carousel-controls">
+        <button @click="anterior">‹</button>
+        <button @click="siguiente">›</button>
+      </div>
+    </div>
+
+    <ul class="auto-info">
+      <li><strong>Motor:</strong> {{ autoSeleccionado.motor }}</li>
+      <li><strong>Transmisión:</strong> {{ autoSeleccionado.transmision }}</li>
+      <li><strong>Capacidad:</strong> {{ autoSeleccionado.capacidad }} personas</li>
+      <li><strong>Extras:</strong> {{ autoSeleccionado.extras }}</li>
+    </ul>
+
+    <button class="reservar-btn" @click="$router.push({ path: '/reservar', query: { auto: autoSeleccionado.id } })">
+      Reservar este auto
+    </button>
+  </div>
+
+  <div v-else class="detalle-error">
+    <h2>Auto no encontrado</h2>
+    <p>El auto que intentas ver no está disponible.</p>
+    <button @click="$router.push('/catalogo')">Volver al catálogo</button>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { autos } from '../data/autos'
+
+
+const route = useRoute()
+const autoId = ref(route.query.auto)
+const autoSeleccionado = ref(null)
+const imagenActual = ref(0)
+
+onMounted(() => {
+  autoSeleccionado.value = autos.find(a => a.id === autoId.value)
+})
+
+function siguiente() {
+  const total = autoSeleccionado.value.imagenes.length
+  imagenActual.value = (imagenActual.value + 1) % total
+}
+
+function anterior() {
+  const total = autoSeleccionado.value.imagenes.length
+  imagenActual.value = (imagenActual.value - 1 + total) % total
+}
+</script>
+
+<style scoped>
+.detalle-auto {
+  max-width: 600px;
+  margin: 4rem auto;
+  padding: 2rem;
+  background: var(--box-bg);
+  color: var(--text-color);
+  border-radius: 16px;
+  box-shadow: var(--neon-shadow);
+  backdrop-filter: blur(12px);
+  text-align: center;
+}
+
+.detalle-auto h2 {
+  color: var(--accent-color);
+  margin-bottom: 1rem;
+}
+
+.carousel {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.carousel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.carousel-controls {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
+}
+
+.carousel-controls button {
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
+  border: none;
+  font-size: 1.5rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.auto-info {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.auto-info li {
+  margin-bottom: 0.5rem;
+}
+
+.reservar-btn {
+  background-color: var(--accent-color);
+  color: #000;
+  border: none;
+  padding: 0.8rem 1.2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.detalle-error {
+  max-width: 500px;
+  margin: 4rem auto;
+  padding: 2rem;
+  text-align: center;
+  background-color: var(--box-bg);
+  color: var(--text-color);
+  border-radius: 16px;
+  box-shadow: var(--neon-shadow);
+  backdrop-filter: blur(10px);
+}
+
+.detalle-error h2 {
+  color: var(--accent-color);
+  margin-bottom: 1rem;
+}
+
+.detalle-error p {
+  margin-bottom: 2rem;
+}
+
+.detalle-error button {
+  background-color: var(--accent-color);
+  color: #000;
+  border: none;
+  padding: 0.8rem 1.2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+</style>

@@ -9,13 +9,12 @@ import Signup from './views/Signup.vue';
 const routes = [
   { path: '/', component: Home },
   { path: '/catalogo', component: Catalogo },
-<<<<<<< Updated upstream
-  { path: '/reserva', component: Reserva },
+  { path: '/reservar', component: Reserva },
   { path: '/login', component: Login },
-  { path: '/signup', component: Signup }
-=======
-  { path: '/reservar', component: Reserva }
->>>>>>> Stashed changes
+  { path: '/signup', component: Signup },
+  {path: '/detalle-auto',
+  name: 'DetalleAuto',
+  component: () => import('./views/DetalleAuto.vue')}
 ]
 
 const router = createRouter({
