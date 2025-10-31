@@ -3,10 +3,10 @@
     <div class="auth-box">
       <h2>Crear cuenta</h2>
       <form @submit.prevent="handleSignup">
-        <input type="text" placeholder="Nombre de usuario" v-model="name" />
-        <input type="email" placeholder="Correo electrónico" v-model="email" />
-       <input type="password" v-model="password" placeholder="Contraseña" />
-<input type="password" v-model="confirmPassword" placeholder="Repetir contraseña" />
+        <input type="text" placeholder="Nombre de usuario" v-model="name" required />
+        <input type="email" placeholder="Correo electrónico" v-model="email" required/>
+       <input type="password" v-model="password" placeholder="Contraseña" required />
+<input type="password" v-model="confirmPassword" placeholder="Repetir contraseña" required/>
 <p v-if="confirmPassword && confirmPassword !== password" class="error-msg">
   Las contraseñas no coinciden
 </p>
@@ -32,7 +32,7 @@ function handleLogin() {
   passwordError.value = password.value.length < 6
 
   if (!emailError.value && !passwordError.value) {
-    // Aquí va tu lógica de login
+    
     console.log('Login exitoso')
   }
 }

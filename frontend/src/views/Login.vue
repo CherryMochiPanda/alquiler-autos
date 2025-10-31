@@ -2,17 +2,23 @@
   <section class="auth-wrapper">
     <div class="auth-box">
       <h2>Iniciar sesión</h2>
-      <form @submit.prevent="handleLogin">
-        <input type="email" v-model="email" placeholder="Correo electrónico" :class="{ error: emailError }" />
+         <form @submit.prevent="iniciarSesion">
+    <input v-model="correo" placeholder="Correo electrónico" :class="{ error: correo && !correoValido }" />
+    <small v-if="correo && !correoValido" class="error-msg">Debe ser un correo válido de Gmail.</small>
+        
         <div class="password-field">
-  <input :type="showPassword ? 'text' : 'password'" v-model="password" placeholder="Contraseña" />
-  <button type="button" @click="showPassword = !showPassword" class="icon-button">
-    <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-  </button>
+      <input type="password" v-model="contrasena" placeholder="Contraseña" :class="{ error: contrasena && !contrasenaValida }" />
+    
+  <button type="button" @click="showPassword = !showPassword" class="icon-button">  
+   <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+  </button> 
+  <small v-if="contrasena && !contrasenaValida" class="error-msg">Mínimo 8 caracteres, 1 mayúscula y 1 número.</small> 
 </div>
 
-
-        <button type="submit">Entrar</button>
+          <button type="submit" :disabled="!formValido">Iniciar sesión</button>
+          <div v-if="mensaje" :class="['alert', tipoMensaje]">
+            {{ mensaje }}
+          </div>
         <p class="switch-link" @click="$router.push('/signup')">¿No tienes cuenta? Crear una</p>
       </form>
     </div>
@@ -20,24 +26,38 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
-const email = ref('')
-const password = ref('')
-const showPassword = ref(false)
+const correo = ref('')
+const contrasena = ref('')
+const mensaje = ref('')
 
-const emailError = ref(false)
-const passwordError = ref(false)
+const correoValido = computed(() =>
+  /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(correo.value)
+)
 
-function handleLogin() {
-  emailError.value = !email.value.includes('@')
-  passwordError.value = password.value.length < 6
+const contrasenaValida = computed(() =>
+  /^(?=.*[A-Z])(?=.*\d).{8,}$/.test(contrasena.value)
+)
 
-  if (!emailError.value && !passwordError.value) {
-    // Aquí va tu lógica de login
-    console.log('Login exitoso')
+const formValido = computed(() =>
+  correoValido.value && contrasenaValida.value
+)
+
+function iniciarSesion() {
+  const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]')
+  const encontrado = usuarios.find(u => u.correo === correo.value)
+
+  if (!encontrado) {
+    mensaje.value = 'Correo no registrado.'
+  } else if (encontrado.contrasena !== contrasena.value) {
+    mensaje.value = 'Contraseña incorrecta.'
+  } else {
+    mensaje.value = `Bienvenido, ${encontrado.nombre}`
+    // Aquí puedes redirigir o guardar sesión
   }
 }
+
 </script>
 
 <style scoped>
@@ -158,5 +178,37 @@ function handleLogin() {
     opacity: 1;
     transform: translateY(0);
   }
+  
 }
+.error-msg {
+  color: #ff4d4d;
+  font-size: 0.85rem;
+  margin-top: -0.5rem;
+}
+input.error {
+  border: 1px solid #ff4d4d;
+}
+button:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
+.alert {
+  padding: 0.8rem;
+  border-radius: 8px;
+  font-weight: bold;
+  text-align: center;
+  color: #ff4d4d;
+}
+
+.alert.error {
+  background-color: rgba(255, 77, 77, 0.2);
+  color: #ff4d4d;
+}
+
+.alert.exito {
+  background-color: rgba(0, 255, 128, 0.2);
+  color: #00cc66;
+}
+
 </style>
