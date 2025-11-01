@@ -100,10 +100,8 @@ function handleReserva() {
         <input type="email" v-model="correo" placeholder="Correo electrónico" :class="{ error: !correo.includes('@') }" />
         <input type="tel" v-model="telefono" placeholder="Teléfono" :class="{ error: telefono.length < 8 }" />
         <small v-if="telefono && !telefonoValido" class="error-msg">Teléfono inválido. Mínimo 8 dígitos.</small>
-        <div class="doc-group">
-          <input type="text" v-model="documentoNumero" placeholder="Número de documento" :class="{ error: !documentoNumero }" />
-          <small v-if="documentoNumero && !dniValido" class="error-msg">DNI debe tener 11 dígitos.</small>
-        </div>
+        <input type="text" v-model="documentoNumero" placeholder="Número de documento" :class="{ error: !documentoNumero }" />               
+        <small v-if="documentoNumero && !dniValido" class="error-msg">DNI debe tener 11 dígitos.</small>
         <input type="date" v-model="fechaInicio" :min="hoy" :class="{ error: !fechaInicio || fechaInicio < hoy }" />
         <small v-if="fechaFin && fechaFin <= fechaInicio" class="error-msg">La fecha final debe ser posterior a la de inicio.</small>
         <small v-if="fechaInicio && fechaInicio < hoy" class="error-msg">La fecha de inicio no puede ser anterior a hoy.</small>
@@ -265,6 +263,7 @@ function handleReserva() {
   border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .reserva-box button:disabled {

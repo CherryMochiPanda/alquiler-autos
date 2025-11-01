@@ -11,7 +11,7 @@
   Las contraseñas no coinciden
 </p>
 
-        <button type="submit">Registrarse</button>
+        <button type="submit"  :disabled="!formMalo" >Registrarse</button>
          <p class="switch-link" @click="$router.push('/login')">¿Ya tienes cuenta? Iniciar sesión</p>
       </form>
     </div>
@@ -19,13 +19,17 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-
+import { ref, computed } from 'vue'
+const name= ref('')
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 const emailError = ref(false)
+const nameError = ref(false)
 const passwordError = ref(false)
+const formMalo = computed(() =>
+  email.value && password.value && name.value
+)
 
 function handleLogin() {
   emailError.value = !email.value.includes('@')
@@ -136,5 +140,9 @@ function handleLogin() {
     opacity: 1;
     transform: translateY(0);
   }
+}
+.auth-box button:disabled {
+  background-color: #999;
+  cursor: not-allowed;
 }
 </style>

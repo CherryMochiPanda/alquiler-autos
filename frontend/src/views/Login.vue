@@ -7,14 +7,12 @@
     <small v-if="correo && !correoValido" class="error-msg">Debe ser un correo válido de Gmail.</small>
         
         <div class="password-field">
-      <input type="password" v-model="contrasena" placeholder="Contraseña" :class="{ error: contrasena && !contrasenaValida }" />
-    
-  <button type="button" @click="showPassword = !showPassword" class="icon-button">  
-   <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-  </button> 
-  <small v-if="contrasena && !contrasenaValida" class="error-msg">Mínimo 8 caracteres, 1 mayúscula y 1 número.</small> 
-</div>
-
+      <input :type="showPassword ? 'text' : 'password'" v-model="password" placeholder="Contraseña" :class="{ error: password && !contrasenaValida }" />
+      <button type="button" @click="showPassword = !showPassword" class="icon-button">  
+      <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+      </button>
+    </div>
+    <small v-if="password && !contrasenaValida" class="error-msg">Mínimo 8 caracteres, 1 mayúscula y 1 número.</small>
           <button type="submit" :disabled="!formValido">Iniciar sesión</button>
           <div v-if="mensaje" :class="['alert', tipoMensaje]">
             {{ mensaje }}
@@ -29,7 +27,8 @@
 import { ref, computed } from 'vue'
 
 const correo = ref('')
-const contrasena = ref('')
+const password = ref('')
+const showPassword = ref(false)
 const mensaje = ref('')
 
 const correoValido = computed(() =>
@@ -37,7 +36,7 @@ const correoValido = computed(() =>
 )
 
 const contrasenaValida = computed(() =>
-  /^(?=.*[A-Z])(?=.*\d).{8,}$/.test(contrasena.value)
+  /^(?=.*[A-Z])(?=.*\d).{8,}$/.test(password.value)
 )
 
 const formValido = computed(() =>
@@ -50,11 +49,11 @@ function iniciarSesion() {
 
   if (!encontrado) {
     mensaje.value = 'Correo no registrado.'
-  } else if (encontrado.contrasena !== contrasena.value) {
+  } else if (encontrado.password !== password.value) {
     mensaje.value = 'Contraseña incorrecta.'
   } else {
     mensaje.value = `Bienvenido, ${encontrado.nombre}`
-    // Aquí puedes redirigir o guardar sesión
+    // Aquí redirigir o guardar sesión
   }
 }
 
@@ -70,6 +69,15 @@ function iniciarSesion() {
 .password-field input {
   flex: 1;
   padding-right: 2.5rem;
+}
+
+.password-field button {
+  margin-left: 0.5rem;
+  background: none;
+  border: none;
+  color: var(--accent-color);
+  font-size: 1.2rem;
+  cursor: pointer;
 }
 
 .icon-button {
@@ -181,6 +189,7 @@ function iniciarSesion() {
   
 }
 .error-msg {
+  flex-direction: column;
   color: #ff4d4d;
   font-size: 0.85rem;
   margin-top: -0.5rem;
@@ -188,7 +197,7 @@ function iniciarSesion() {
 input.error {
   border: 1px solid #ff4d4d;
 }
-button:disabled {
+.auth-box button:disabled {
   background-color: #999;
   cursor: not-allowed;
 }
