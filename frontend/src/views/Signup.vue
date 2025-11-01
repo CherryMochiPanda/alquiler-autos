@@ -31,7 +31,7 @@ const formMalo = computed(() =>
   email.value && password.value && name.value
 )
 
-function handleLogin() {
+function handleSignup() {
   emailError.value = !email.value.includes('@')
   passwordError.value = password.value.length < 6
 

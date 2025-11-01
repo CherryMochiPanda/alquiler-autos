@@ -32,7 +32,7 @@ function anterior(id) {
   imagenActual.value[id] = (imagenActual.value[id] - 1 + total) % total
 }
 
-// group autos by category
+// agrupar por categoria
 const grouped = computed(() => {
   const map = {}
   autos.forEach(a => {

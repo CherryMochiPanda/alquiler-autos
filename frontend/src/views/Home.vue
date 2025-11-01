@@ -6,7 +6,7 @@
       <p>{{ $t('home.hero.subtitle') }}</p>
       <div class="hero-buttons">
         <router-link to="/catalogo" class="btn">{{ $t('home.hero.ctaCatalog') }}</router-link>
-        <router-link to="/reservar" class="btn alt">{{ $t('home.hero.ctaReserve') }}</router-link>
+              
       </div>
     </div>
   </section>
@@ -653,14 +653,13 @@ p {
   display: flex;
   justify-content: space-around;
   position: relative;
-  z-index: 3; /* ensure steps sit above dots and line */
+  z-index: 3;
 }
 
-/* Mobile: keep steps in a single horizontal row and allow touch scroll instead of wrapping */
 @media (max-width: 700px) {
   .timeline-steps {
     flex-wrap: nowrap;
-    overflow-x: hidden; /* prevent user scroll; we drive scroll programmatically */
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     gap: 1rem;
     padding: 0.5rem 1rem;
@@ -668,7 +667,7 @@ p {
     touch-action: none;
   }
   .timeline-container {
-    padding-bottom: 3.5rem; /* make room for the line */
+    padding-bottom: 3.5rem;
   }
   .step {
     min-width: 160px;

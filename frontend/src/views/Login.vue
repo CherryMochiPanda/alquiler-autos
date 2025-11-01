@@ -1,23 +1,23 @@
 <template>
   <section class="auth-wrapper">
     <div class="auth-box">
-      <h2>{{ $t('login.title') }}</h2>
+      <h2>Iniciar sesión</h2>
          <form @submit.prevent="iniciarSesion">
-    <input v-model="correo" :placeholder="$t('login.placeholders.email')" :class="{ error: correo && !correoValido }" />
-    <small v-if="correo && !correoValido" class="error-msg">{{ $t('login.errors.email') }}</small>
+    <input v-model="correo" placeholder="Correo electrónico" :class="{ error: correo && !correoValido }" />
+    <small v-if="correo && !correoValido" class="error-msg">Debe ser un correo válido de Gmail.</small>
         
         <div class="password-field">
-  <input :type="showPassword ? 'text' : 'password'" v-model="password" :placeholder="$t('login.placeholders.password')" :class="{ error: password && !contrasenaValida }" />
+      <input :type="showPassword ? 'text' : 'password'" v-model="password" placeholder="Contraseña" :class="{ error: password && !contrasenaValida }" />
       <button type="button" @click="showPassword = !showPassword" class="icon-button">  
       <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
       </button>
     </div>
-    <small v-if="password && !contrasenaValida" class="error-msg">{{ $t('login.errors.password') }}</small>
-          <button type="submit" :disabled="!formValido">{{ $t('login.submit') }}</button>
+    <small v-if="password && !contrasenaValida" class="error-msg">Mínimo 8 caracteres, 1 mayúscula y 1 número.</small>
+          <button type="submit" :disabled="!formValido">Iniciar sesión</button>
           <div v-if="mensaje" :class="['alert', tipoMensaje]">
             {{ mensaje }}
           </div>
-        <p class="switch-link" @click="$router.push('/signup')">{{ $t('login.noAccount') }}</p>
+        <p class="switch-link" @click="$router.push('/signup')">¿No tienes cuenta? Crear una</p>
       </form>
     </div>
   </section>
@@ -25,16 +25,11 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { pushToast } from '../utils/toastStore'
-import { useRouter } from 'vue-router'
 
 const correo = ref('')
 const password = ref('')
 const showPassword = ref(false)
-
-const { t } = useI18n()
-const router = useRouter()
+const mensaje = ref('')
 
 const correoValido = computed(() =>
   /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(correo.value)
@@ -49,21 +44,15 @@ const formValido = computed(() =>
 )
 
 function iniciarSesion() {
-  const usersList = JSON.parse(localStorage.getItem('users') || '[]')
-  const encontrado = usersList.find(u => u.email === correo.value)
+  const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]')
+  const encontrado = usuarios.find(u => u.correo === correo.value)
 
   if (!encontrado) {
-    pushToast(t('login.notRegistered'), 'error')
+    mensaje.value = 'Correo no registrado.'
   } else if (encontrado.password !== password.value) {
-    pushToast(t('login.wrongPassword'), 'error')
-  } else {
-    const displayName = encontrado.name || encontrado.nombre || ''
-    pushToast(t('login.welcome', { name: displayName }), 'success')
-    // persist demo session and admin flag
-    localStorage.setItem('user', JSON.stringify({ name: displayName, email: encontrado.email }))
-    const adminFlag = encontrado.email && encontrado.email.includes('admin')
-    localStorage.setItem('isAdmin', adminFlag ? 'true' : 'false')
-    router.push('/account')
+    mensaje.value = 'Contraseña incorrecta.'
+    mensaje.value = `Bienvenido, ${encontrado.nombre}`
+    // Aquí redirigir o guardar sesión
   }
 }
 

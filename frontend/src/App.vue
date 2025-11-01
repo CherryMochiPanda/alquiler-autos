@@ -37,7 +37,7 @@ onMounted(() => {
   --color-caja: #fff2fdc6;
   --color-sombra:rgba(17, 126, 126, 0.392);
   --box-bg: rgba(255, 255, 255, 0.8);
-  --neon-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff;
+  --neon-shadow: 0 0 10px rgba(17, 126, 126, 0.392);
 }
 
 .dark {
@@ -50,7 +50,7 @@ onMounted(() => {
   --color-caja: rgba(255, 255, 255, 0.1);
   --color-sombra:rgba(0, 255, 255, 0.1);
   --box-bg: rgba(255, 255, 255, 0.05);
-  --neon-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff;
+  --neon-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
 }
 
 #app {
@@ -71,7 +71,7 @@ body {
   background-color: var(--bg-color);
   color: var(--text-color);
   font-family: 'Segoe UI', sans-serif;
-  min-height: 100vh;
+  min-height: 100%;
 }
 
 </style>

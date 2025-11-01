@@ -32,7 +32,6 @@ const nombre = ref('')
 const correo = ref('')
 const telefono = ref('')
 const documentoNumero = ref('')
-const comentarios = ref('')
 
 const hoy = new Date().toISOString().split('T')[0]
 
@@ -54,8 +53,9 @@ const precioTotal = computed(() => dias.value * precioPorDia)
 
 const fechasValidas = computed(() => {
   return (
-    fechaInicio.value >= hoy &&
-    fechaFin.value > fechaInicio.value
+    (fechaInicio.value >= hoy || fechaInicio == hoy )
+    &&
+    (fechaFin.value > fechaInicio.value || fechaFin.value == fechaInicio.value)
   )
 })
 

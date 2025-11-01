@@ -18,10 +18,10 @@
         <input v-model="name" :placeholder="$t('account.placeholders.name')" />
       </div>
       <div class="form-row">
-        <input v-model="email" :placeholder="$t('account.placeholders.email')" />
+        <input v-model="email" :placeholder="$t('account.placeholders.email')" :class="{ error: email && !emailValid }"/>
       </div>
       <div class="form-row">
-        <input v-model="password" type="password" :placeholder="$t('account.placeholders.password')" />
+        <input v-model="password" type="password" :placeholder="$t('account.placeholders.password')" :class="{ error: password && !passwordValid }"/>
       </div>
 
       <div class="form-actions">
@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref , computed} from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { pushToast } from '../utils/toastStore'
@@ -50,6 +50,13 @@ const name = ref('')
 const email = ref('')
 const password = ref('')
 
+const emailValid = computed(() =>
+  /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email.value)
+)
+const passwordValid = computed(() =>
+  /^(?=.*[A-Z])(?=.*\d).{8,}$/.test(password.value)
+)
+
 function persistUser(u) {
   localStorage.setItem('user', JSON.stringify(u))
   // keep a users list for admin demo
@@ -62,6 +69,7 @@ function persistUser(u) {
 }
 
 function login() {
+  if (!name.value) return pushToast(t('account.errors.userRequired'), 'error')
   if (!email.value) return pushToast(t('account.errors.emailRequired'), 'error')
   const u = { name: name.value || '', email: email.value }
   persistUser(u)
@@ -69,12 +77,15 @@ function login() {
   localStorage.setItem('isAdmin', adminFlag ? 'true' : 'false')
   isAdmin.value = adminFlag
   user.value = u
-  // refresh view
   router.push('/account')
 }
 
 function signup() {
+  if (!name.value) return pushToast(t('account.errors.userRequired'), 'error')
   if (!email.value) return pushToast(t('account.errors.emailRequired'), 'error')
+  if (!emailValid.value) return pushToast(t('account.errors.emailInvalid'), 'error')
+  if (!password.value) return pushToast(t( 'account.errors.passRequired'), 'error')
+  if (!passwordValid.value) return pushToast(t('account.errors.passInvalid'), 'error')
   const u = { name: name.value || '', email: email.value }
   persistUser(u)
   const adminFlag = email.value.includes('admin')
@@ -100,43 +111,79 @@ function toggleAdmin() {
 </script>
 
 <style scoped>
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+}
 .account-wrapper {
   padding: 2rem;
   display: flex;
   justify-content: center;
+  background: var(--color-wrapper);
+  height: 30rem;
 }
 .profile-box, .auth-box {
   width: 100%;
   max-width: 480px;
   background: var(--box-bg);
   color: var(--text-color);
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: var(--neon-shadow);
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 20px var(--color-sombra);
+  animation: fadeIn 0.6s ease;
 }
+.auth-box h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.5;
+  color: var(--accent-color);
+}
+
 .form-row {
   margin-bottom: 0.75rem;
 }
+
 .form-row input {
   width: 100%;
   padding: 0.6rem;
   border-radius: 8px;
   border: none;
-  background: rgba(255,255,255,0.03);
+  background-color:var(--color-caja);
   color: var(--text-color);
+  transition: border 0.3s ease;
 }
-.form-actions {
+
+.form-actions , .profile-actions {
   display: flex;
   gap: 1rem;
   margin-top: 1rem;
 }
+
 .form-actions button, .profile-actions button {
   padding: 0.6rem 1rem;
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  background: var(--accent-color);
-  color: #000;
+  background-color: var(--accent-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease;
+}
+
+.form-row input.error {
+  border: 1px solid #ff4d4d;
+}
+
+.auth-box button:hover, .form-row button:hover {
+  background-color: #00c0ff;
 }
 .hint { margin-top: 1rem; color: var(--color-Tgrand); font-size: 0.9rem; }
 </style>

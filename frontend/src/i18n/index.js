@@ -1,3 +1,4 @@
+import { BaseTransitionPropsValidators } from 'vue'
 import { createI18n } from 'vue-i18n'
 
 const messages = {
@@ -61,26 +62,6 @@ const messages = {
       },
       seeMore: 'Ver más',
       back: 'Volver'
-    },
-    reserva: {
-      title: 'Reserve Car',
-      placeholders: {
-        name: 'Your name',
-        email: 'Email',
-        phone: 'Phone',
-        dni: 'Document number'
-      },
-      errors: {
-        name: 'Only letters, minimum 2 characters.',
-        phone: 'Invalid phone. Minimum 8 digits.',
-        dni: 'Document must have 11 digits.',
-        dateEnd: 'End date must be after start date.',
-        dateStart: "Start date can't be before today."
-      },
-      paymentComing: 'Payment method (coming soon)',
-      days: 'Days',
-      estimated: 'Estimated price',
-      confirm: 'Confirm reservation'
     },
     login: {
       title: 'Login',
@@ -171,7 +152,13 @@ const messages = {
       signup: 'Crear cuenta (demo)',
       hint: 'Demo: cualquier email sirve. Si el correo contiene "admin" se marcará como admin.',
       errors: {
-        emailRequired: 'Introduce un correo'
+        userRequired: 'Introduce un usuario',
+        emailRequired: 'Introduce un correo',
+        passRequired: 'Introduce una contraseña',
+        nameInvalid: 'Ese usuario no...',
+        emailInvalid: 'Introduce un correo válido, ej: usuario@gmail.com',
+        passIncorrect: 'Contraseña incorrecta, intente de nuevo',
+        passInvalid: 'Contraseña debe tener minimo 8 caracteres, 1 mayúscula y 1 número'
       }
     },
     admin: {
@@ -340,6 +327,26 @@ const messages = {
     reservaMessages: {
       confirmed: 'The reservation is confirmed for {car}!\nFrom {start} to {end} ({days} days)\nEstimated total: ${total}'
     },
+    reserva: {
+      title: 'Reserve Car',
+      placeholders: {
+        name: 'Your name',
+        email: 'Email',
+        phone: 'Phone',
+        dni: 'Document number'
+      },
+      errors: {
+        name: 'Only letters, minimum 2 characters.',
+        phone: 'Invalid phone. Minimum 8 digits.',
+        dni: 'Document must have 11 digits.',
+        dateEnd: 'End date must be after start date.',
+        dateStart: "Start date can't be before today."
+      },
+      paymentComing: 'Payment method (coming soon)',
+      days: 'Days',
+      estimated: 'Estimated price',
+      confirm: 'Confirm reservation'
+    },
     account: {
       title: 'My Account',
       labels: {
@@ -366,7 +373,13 @@ const messages = {
       signup: 'Sign up (demo)',
       hint: 'Demo: any email works. Email containing "admin" will be marked as admin.',
       errors: {
-        emailRequired: 'Please enter an email'
+        emailRequired: 'Please enter an email',
+        userRequired: 'Please enter an User name',
+        passRequired: 'Please enter a password',
+        nameInvalid: 'Please enter a valid User',
+        emailInvalid: 'Please enter a valid email, ej: user@gmail.com',
+        passIncorrect: 'Password incorrect, try again',
+        passInvalid: 'Your password must have at least 8 characters, 1 uppercase and 1 number'
       }
     },
     admin: {
