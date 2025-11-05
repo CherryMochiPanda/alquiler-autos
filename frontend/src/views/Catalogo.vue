@@ -1,6 +1,20 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { autos } from '../data/autos'
+import { useI18n } from 'vue-i18n'
+import CarCard from '../components/CarCard.vue'
+
+const route = useRoute()
+const router = useRouter()
+const { t } = useI18n()
+
+// helper: infer category from carpeta or id (prefix before -)
+function inferCategory(a) {
+  const src = a.carpeta || a.id || ''
+  const prefix = src.split('-')[0]
+  return prefix || 'default'
+}
 
 
 const imagenActual = ref({})
@@ -17,31 +31,60 @@ function anterior(id) {
   const total = autos.find(a => a.id === id).imagenes.length
   imagenActual.value[id] = (imagenActual.value[id] - 1 + total) % total
 }
+
+// group autos by category
+const grouped = computed(() => {
+  const map = {}
+  autos.forEach(a => {
+    const cat = inferCategory(a)
+    if (!map[cat]) map[cat] = []
+    map[cat].push(a)
+  })
+  return map
+})
+
+const selectedCategory = computed(() => route.query.category || null)
+const previewLimit = 3
+
+function goToCategory(cat) {
+  router.push({ path: '/catalogo', query: { category: cat } })
+}
+
+function backToCatalog() {
+  router.push({ path: '/catalogo' })
+}
 </script>
 
 <template>
   <section class="catalogo-wrapper">
-    <h2>Bienvenido a la página de Catálogo</h2>
-    <div class="catalogo-grid">
-      <div v-for="auto in autos" :key="auto.id" class="car-card">
-        <div class="car-carousel">
-          <img
-            :src="`/img/autos/${auto.carpeta}/${auto.imagenes[imagenActual[auto.id]]}`"
-            :alt="auto.nombre"
-          />
-          <div class="carousel-controls">
-            <button @click="anterior(auto.id)">‹</button>
-            <button @click="siguiente(auto.id)">›</button>
+    <h2>{{ t('nav.catalog') }}</h2>
+
+    <template v-if="!selectedCategory">
+      <div class="category-list">
+        <div v-for="(items, cat) in grouped" :key="cat" class="category-block">
+          <h3>{{ t(`catalog.categories.${cat}`) || cat }}</h3>
+          <div class="catalogo-grid">
+            <CarCard v-for="auto in items.slice(0, previewLimit)" :key="auto.id" :auto="auto" @view="id => $router.push({ path: '/detalle-auto', query: { auto: id } })" />
+          </div>
+          <div class="category-actions">
+            <button class="btn-secondary" @click="goToCategory(cat)">{{ t('catalog.seeMore') }}</button>
           </div>
         </div>
-        <h3>{{ auto.nombre }}</h3>
-        <p>{{ auto.descripcion }}</p>
-        <div class="card-buttons">
-          <button @click="$router.push({ path: '/detalle-auto', query: { auto: auto.id } })">Ver detalles</button>
-          <button @click="$router.push({ path: '/reservar', query: { auto: auto.id } })">Reservar</button>
+      </div>
+    </template>
+
+    <template v-else>
+      <div class="category-full">
+        <h3>{{ t(`catalog.categories.${selectedCategory}`) || selectedCategory }}</h3>
+        <div class="catalogo-grid">
+          <CarCard v-for="auto in grouped[selectedCategory] || []" :key="auto.id" :auto="auto" :showReserve="true" @view="id => $router.push({ path: '/detalle-auto', query: { auto: id } })" @reserve="id => $router.push({ path: '/reservar', query: { auto: id } })" />
+        </div>
+        <div class="category-actions">
+          <button class="btn-secondary" @click="backToCatalog">{{ t('catalog.back') }}</button>
         </div>
       </div>
-    </div>
+    </template>
+
   </section>
 </template>
 
@@ -57,6 +100,22 @@ function anterior(id) {
   flex-wrap: wrap;
   gap: 2rem;
   justify-content: center;
+}
+
+.category-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.category-actions .btn-secondary {
+  background-color: transparent;
+  border: 2px solid var(--accent-color);
+  color: var(--accent-color);
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
 }
 
 .car-card {

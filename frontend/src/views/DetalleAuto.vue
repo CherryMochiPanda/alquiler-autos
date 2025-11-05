@@ -14,21 +14,21 @@
     </div>
 
     <ul class="auto-info">
-      <li><strong>Motor:</strong> {{ autoSeleccionado.motor }}</li>
-      <li><strong>Transmisión:</strong> {{ autoSeleccionado.transmision }}</li>
-      <li><strong>Capacidad:</strong> {{ autoSeleccionado.capacidad }} personas</li>
-      <li><strong>Extras:</strong> {{ autoSeleccionado.extras }}</li>
+      <li><strong>{{ $t('detalle.labels.motor') }}:</strong> {{ autoSeleccionado.motor }}</li>
+      <li><strong>{{ $t('detalle.labels.transmission') }}:</strong> {{ autoSeleccionado.transmision }}</li>
+      <li><strong>{{ $t('detalle.labels.capacity') }}:</strong> {{ autoSeleccionado.capacidad }} {{ $t('detalle.labels.people') }}</li>
+      <li><strong>{{ $t('detalle.labels.extras') }}:</strong> {{ autoSeleccionado.extras }}</li>
     </ul>
 
     <button class="reservar-btn" @click="$router.push({ path: '/reservar', query: { auto: autoSeleccionado.id } })">
-      Reservar este auto
+      {{ $t('detalle.reserveBtn') }}
     </button>
   </div>
 
   <div v-else class="detalle-error">
-    <h2>Auto no encontrado</h2>
-    <p>El auto que intentas ver no está disponible.</p>
-    <button @click="$router.push('/catalogo')">Volver al catálogo</button>
+    <h2>{{ $t('detalle.notFound.title') }}</h2>
+    <p>{{ $t('detalle.notFound.message') }}</p>
+    <button @click="$router.push('/catalogo')">{{ $t('detalle.backToCatalog') }}</button>
   </div>
 </template>
 

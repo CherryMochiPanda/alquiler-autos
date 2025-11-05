@@ -4,6 +4,8 @@ export const autos = [
     id: 'sedan',
     nombre: 'Sedán Clásico',
     carpeta: 'sedan-toyota',
+    destacado: true,
+    cover: '/img/autos/sedan-clasico.jpg',
     imagenes: [
       'toyota-corola-LE-2021-p1.webp',
       'toyota-corola-LE-2021-p2.webp',
@@ -23,6 +25,8 @@ export const autos = [
     id: 'suv',
     nombre: 'SUV Familiar',
     carpeta: 'suv-hyundai',
+    destacado: true,
+    cover: '/img/autos/suv-familiar.jpg',
     imagenes: [
       'hyundai-tucson-2022-p1.webp',
       'hyundai-tucson-2022-p2.webp',
@@ -40,6 +44,8 @@ export const autos = [
     id: 'deportivo',
     nombre: 'Deportivo GT',
     carpeta: 'deportivo-ford',
+    destacado: true,
+    cover: '/img/autos/deportivo.jpg',
     imagenes: [
       'ford-mustang-gt-2021-p1.webp',
       'ford-mustang-gt-2021-p2.webp',

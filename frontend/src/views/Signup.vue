@@ -1,18 +1,18 @@
 <template>
   <section class="auth-wrapper">
     <div class="auth-box">
-      <h2>Crear cuenta</h2>
+      <h2>{{ $t('signup.title') }}</h2>
       <form @submit.prevent="handleSignup">
-        <input type="text" placeholder="Nombre de usuario" v-model="name" required />
-        <input type="email" placeholder="Correo electrónico" v-model="email" required/>
-       <input type="password" v-model="password" placeholder="Contraseña" required />
-<input type="password" v-model="confirmPassword" placeholder="Repetir contraseña" required/>
+        <input type="text" :placeholder="$t('signup.placeholders.name')" v-model="name" required />
+        <input type="email" :placeholder="$t('signup.placeholders.email')" v-model="email" required/>
+       <input type="password" v-model="password" :placeholder="$t('signup.placeholders.password')" required />
+<input type="password" v-model="confirmPassword" :placeholder="$t('signup.placeholders.confirmPassword')" required/>
 <p v-if="confirmPassword && confirmPassword !== password" class="error-msg">
-  Las contraseñas no coinciden
+  {{ $t('signup.errors.passwordMismatch') }}
 </p>
 
-        <button type="submit"  :disabled="!formMalo" >Registrarse</button>
-         <p class="switch-link" @click="$router.push('/login')">¿Ya tienes cuenta? Iniciar sesión</p>
+        <button type="submit"  :disabled="!formMalo" >{{ $t('signup.submit') }}</button>
+         <p class="switch-link" @click="$router.push('/login')">{{ $t('signup.haveAccount') }}</p>
       </form>
     </div>
   </section>

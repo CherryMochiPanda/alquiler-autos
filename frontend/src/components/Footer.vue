@@ -1,12 +1,18 @@
 <template>
   <footer class="footer">
-    <p>&copy; 2025 AutoRent. Todos los derechos reservados.</p>
+    <p>{{ t('footer.copyright', { year }) }}</p>
   </footer>
 </template>
 
+<script setup>
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+const year = new Date().getFullYear()
+</script>
+
 <style scoped>
 .footer {
-  width: 100vw;
+  width: 100%;
   box-sizing: border-box;
   padding: 0.5rem 1rem;
   text-align: center;

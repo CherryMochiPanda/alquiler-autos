@@ -1,5 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { pushToast } from '../utils/toastStore'
 import { useRoute } from 'vue-router'
 import { autos } from '../data/autos'
 
@@ -7,6 +9,8 @@ const route = useRoute()
 const autoId = ref(route.query.auto)
 const autoSeleccionado = ref(null)
 const imagenActual = ref(0)
+
+const { t } = useI18n()
 
 onMounted(() => {
   autoSeleccionado.value = autos.find(a => a.id === autoId.value)
@@ -65,7 +69,13 @@ const formValido = computed(() =>
 
 
 function handleReserva() {
-  alert(`¡Reserva confirmada para el ${autoSeleccionado.value.nombre}!\nDel ${fechaInicio.value} al ${fechaFin.value} (${dias.value} días)\nTotal estimado: $${precioTotal.value}`)
+  pushToast(t('reservaMessages.confirmed', {
+    car: autoSeleccionado.value.nombre,
+    start: fechaInicio.value,
+    end: fechaFin.value,
+    days: dias.value,
+    total: precioTotal.value
+  }), 'success')
 }
 </script>
 
@@ -85,47 +95,47 @@ function handleReserva() {
         </div>
       </div>
       <ul>
-        <li><strong>Motor:</strong> {{ autoSeleccionado.motor }}</li>
-        <li><strong>Transmisión:</strong> {{ autoSeleccionado.transmision }}</li>
-        <li><strong>Capacidad:</strong> {{ autoSeleccionado.capacidad }} personas</li>
-        <li><strong>Extras:</strong> {{ autoSeleccionado.extras }}</li>
+        <li><strong>{{ t('detalle.labels.motor') }}:</strong> {{ autoSeleccionado.motor }}</li>
+        <li><strong>{{ t('detalle.labels.transmission') }}:</strong> {{ autoSeleccionado.transmision }}</li>
+        <li><strong>{{ t('detalle.labels.capacity') }}:</strong> {{ autoSeleccionado.capacidad }} {{ t('detalle.labels.people') }}</li>
+        <li><strong>{{ t('detalle.labels.extras') }}:</strong> {{ autoSeleccionado.extras }}</li>
       </ul>
     </div>
 
     <div class="reserva-box">
-      <h2>Reservar Auto</h2>
+      <h2>{{ $t('reserva.title') }}</h2>
       <form @submit.prevent="handleReserva">
-        <input type="text" v-model="nombre" placeholder="Tu nombre" :class="{ error: !nombre }" />
-        <small v-if="nombre && !nombreValido" class="error-msg">Solo letras, mínimo 2 caracteres.</small>
-        <input type="email" v-model="correo" placeholder="Correo electrónico" :class="{ error: !correo.includes('@') }" />
-        <input type="tel" v-model="telefono" placeholder="Teléfono" :class="{ error: telefono.length < 8 }" />
-        <small v-if="telefono && !telefonoValido" class="error-msg">Teléfono inválido. Mínimo 8 dígitos.</small>
-        <input type="text" v-model="documentoNumero" placeholder="Número de documento" :class="{ error: !documentoNumero }" />               
-        <small v-if="documentoNumero && !dniValido" class="error-msg">DNI debe tener 11 dígitos.</small>
+        <input type="text" v-model="nombre" :placeholder="$t('reserva.placeholders.name')" :class="{ error: !nombre }" />
+        <small v-if="nombre && !nombreValido" class="error-msg">{{ $t('reserva.errors.name') }}</small>
+        <input type="email" v-model="correo" :placeholder="$t('reserva.placeholders.email')" :class="{ error: !correo.includes('@') }" />
+        <input type="tel" v-model="telefono" :placeholder="$t('reserva.placeholders.phone')" :class="{ error: telefono.length < 8 }" />
+        <small v-if="telefono && !telefonoValido" class="error-msg">{{ $t('reserva.errors.phone') }}</small>
+        <input type="text" v-model="documentoNumero" :placeholder="$t('reserva.placeholders.dni')" :class="{ error: !documentoNumero }" />               
+        <small v-if="documentoNumero && !dniValido" class="error-msg">{{ $t('reserva.errors.dni') }}</small>
         <input type="date" v-model="fechaInicio" :min="hoy" :class="{ error: !fechaInicio || fechaInicio < hoy }" />
-        <small v-if="fechaFin && fechaFin <= fechaInicio" class="error-msg">La fecha final debe ser posterior a la de inicio.</small>
-        <small v-if="fechaInicio && fechaInicio < hoy" class="error-msg">La fecha de inicio no puede ser anterior a hoy.</small>
+        <small v-if="fechaFin && fechaFin <= fechaInicio" class="error-msg">{{ $t('reserva.errors.dateEnd') }}</small>
+        <small v-if="fechaInicio && fechaInicio < hoy" class="error-msg">{{ $t('reserva.errors.dateStart') }}</small>
 
         <input type="date" v-model="fechaFin" :min="fechaInicio" :class="{ error: !fechaFin || fechaFin <= fechaInicio }" />
-        <small v-if="fechaFin && fechaFin <= fechaInicio" class="error-msg">La fecha final debe ser posterior a la de inicio.</small>
+        <small v-if="fechaFin && fechaFin <= fechaInicio" class="error-msg">{{ $t('reserva.errors.dateEnd') }}</small>
 
         <select disabled>
-          <option>Método de pago (próximamente)</option>
+          <option>{{ $t('reserva.paymentComing') }}</option>
         </select>
 
         <div class="resumen">
-          <p><strong>Días:</strong> {{ dias }}</p>
-          <p><strong>Precio estimado:</strong> ${{ precioTotal }}</p>
+          <p><strong>{{ $t('reserva.days') }}:</strong> {{ dias }}</p>
+          <p><strong>{{ $t('reserva.estimated') }}:</strong> ${{ precioTotal }}</p>
         </div>
 
-        <button type="submit" :disabled="!formValido">Confirmar reserva</button>
+        <button type="submit" :disabled="!formValido">{{ $t('reserva.confirm') }}</button>
       </form>
     </div>
   </div>
 
   <div v-else class="reserva-error">
-    <p>No se encontró el auto seleccionado, para acceder a las reservaciones debería visitar primero nuestro catálogo de autos</p>
-    <button @click="$router.push('/catalogo')">Volver al catálogo</button>
+    <p>{{ $t('reservaFallback.notFound') }}</p>
+    <button @click="$router.push('/catalogo')">{{ $t('reservaFallback.back') }}</button>
   </div>
 </template>
 

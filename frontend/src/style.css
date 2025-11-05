@@ -54,6 +54,49 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* Unified button classes used across components */
+.btn,
+.btn-primary {
+  background-color: var(--accent-color);
+  color: #000;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+.btn-secondary {
+  background-color: transparent;
+  border: 2px solid var(--accent-color);
+  color: var(--accent-color);
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.btn-secondary:hover {
+  background-color: rgba(0,0,0,0.04);
+}
+.btn-danger {
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+}
+
+/* Focus states for accessibility */
+.btn:focus,
+.btn-primary:focus,
+.btn-secondary:focus,
+.btn-danger:focus {
+  outline: 3px solid rgba(0, 127, 255, 0.25);
+  outline-offset: 2px;
+}
+
 .card {
   padding: 2em;
 }
@@ -76,4 +119,11 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+/* destacar enlace activo del router */
+.router-link-active,
+.router-link-exact-active {
+  color: var(--accent-color);
+  font-weight: 600;
 }

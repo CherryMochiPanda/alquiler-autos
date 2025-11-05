@@ -3,12 +3,22 @@
     <Navbar />
     <router-view />
     <Footer />
+    <ToastContainer />
   </div>
 </template>
 
 <script setup>
 import Navbar from './components/Navbar.vue'
 import Footer from './components/Footer.vue'
+import ToastContainer from './components/ToastContainer.vue'
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  const saved = localStorage.getItem('theme')
+  if (saved === 'dark') document.documentElement.classList.add('dark')
+  else if (saved === 'light') document.documentElement.classList.remove('dark')
+  else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark')
+})
 </script>
 
 <style>
