@@ -97,9 +97,30 @@ function prev() {
   cursor: pointer;
   border-radius: 4px;
 }
-.card-buttons { display:flex; gap:0.5rem; justify-content:center; margin-top:1rem }
-.btn-primary { background-color: var(--accent-color); color: #000; border:none; padding:0.6rem 1rem; border-radius:8px; cursor:pointer; }
-.btn-secondary { background-color: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); padding:0.5rem 0.9rem; border-radius:8px; cursor:pointer; }
+.card-buttons { 
+  display:flex; 
+  gap:0.5rem; 
+  justify-content:center; 
+  margin-top:1rem 
+}
+.btn-primary { 
+  background-color: var(--accent-color); 
+  color: var(--text-color-bold); 
+  border:none; 
+  padding:0.6rem 1rem; 
+  border-radius:8px;   
+  font-weight: bold;  
+  cursor:pointer; 
+}
+.btn-secondary { 
+  background-color: transparent; 
+  border: 2px solid var(--accent-color); 
+  color: var(--accent-color); 
+  padding:0.5rem 0.9rem; 
+  border-radius:8px;     
+  font-weight: bold;
+  cursor:pointer; 
+}
 
 
 .car-card.featured {

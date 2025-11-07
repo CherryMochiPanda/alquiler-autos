@@ -124,7 +124,7 @@ function anterior() {
 
 .reservar-btn {
   background-color: var(--accent-color);
-  color: #000;
+  color: var(--text-color-bold);
   border: none;
   padding: 0.8rem 1.2rem;
   border-radius: 8px;

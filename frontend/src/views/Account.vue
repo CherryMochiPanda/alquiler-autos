@@ -169,13 +169,15 @@ function toggleAdmin() {
 }
 
 .form-actions button, .profile-actions button {
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
   border: none;
   cursor: pointer;
   background-color: var(--accent-color);
-  color: var(--text-color);
   transition: background-color 0.3s ease;
+  color: var(--text-color-bold);
+  padding: 0.8rem 1.2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 .form-row input.error {

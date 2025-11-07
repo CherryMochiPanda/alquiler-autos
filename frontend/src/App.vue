@@ -31,6 +31,7 @@ onMounted(() => {
   --divider-color: rgba(0, 0, 0, 0.1);
   --bg-color: #ffffff;
   --text-color: #000000;
+  --text-color-bold: #ffffff;
   --accent-color: #0077cc;
   --color-wrapper:linear-gradient(to bottom right, #fcfeff, #d2f1ff, #e9d7ff);
   --color-Tgrand: #6a6a6a;
@@ -44,6 +45,7 @@ onMounted(() => {
   --divider-color:  rgba(255, 255, 255, 0.1); 
   --bg-color: #121212;
   --text-color: #f0f0f0;
+  --text-color-bold: #000000;
   --accent-color: #00f0ff;
   --color-wrapper:linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
   --color-Tgrand: #ccc;
@@ -75,5 +77,3 @@ body {
 }
 
 </style>
-
-

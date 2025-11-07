@@ -155,7 +155,6 @@ function computeStepPositions() {
     }
   }
 }
-
 function startTimeline() {
   // segment-based animation: go from 0 -> firstPoint (quick), then for each segment
   // keep the previous step active while the line travels to the next point.
@@ -298,9 +297,6 @@ function viewCar(id) {
   router.push({ path: '/detalle-auto', query: { auto: id } })
 }
 
-function reserveCar(id) {
-  router.push({ path: '/reservar', query: { auto: id } })
-}
 </script>
 <style scoped>
 .hero {
@@ -324,8 +320,8 @@ function reserveCar(id) {
   transform: translateX(-50%);
   width: 120%;
   height: 120%;
-  background: radial-gradient(circle at 30% 30%, #00f0ff33, transparent 70%),
-              radial-gradient(circle at 70% 70%, #0077cc33, transparent 70%);
+  background: radial-gradient(circle at 30% 30%, #00ccff33, transparent 70%),
+              radial-gradient(circle at 70% 70%, #006efd33, transparent 70%);
   filter: blur(80px);
   z-index: 0;
   animation: moveGlow 20s ease-in-out infinite alternate;
@@ -364,7 +360,7 @@ p {
 
 .btn {
   background-color: var(--accent-color);
-  color: #fff;
+  color: var(--text-color-bold);
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 8px;
@@ -383,6 +379,7 @@ p {
   border: 2px solid var(--accent-color);
   color: var(--accent-color);
 }
+
 
 /* Responsive adjustments */
 @media (max-width: 900px) {
