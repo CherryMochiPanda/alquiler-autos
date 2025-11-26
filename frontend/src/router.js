@@ -1,37 +1,45 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import Home from './views/Home.vue';
-import Catalogo from './views/Catalogo.vue';
-import Reserva from './views/Reserva.vue';
-import Login from './views/Login.vue';
-import Signup from './views/Signup.vue';
-import Account from './views/Account.vue';
-import Admin from './views/Admin.vue';
+import { createRouter, createWebHistory } from 'vue-router'
+import Home from './views/Home.vue'
+import Catalogo from './views/Catalogo.vue'
+import Reserva from './views/Reserva.vue'
+import Account from './views/Account.vue'
+import Admin from './views/Admin.vue'
+import DetalleAuto from './views/DetalleAuto.vue'
 
+// Guarda para proteger ruta admin
+function adminGuard(to, from, next) {
+  try {
+    const isAdmin = localStorage.getItem('isAdmin') === 'true'
+    if (isAdmin) {
+      next()
+    } else {
+      next('/')
+    }
+  } catch (e) {
+    next('/')
+  }
+}
 
 const routes = [
   { path: '/', component: Home },
   { path: '/catalogo', component: Catalogo },
   { path: '/reservar', component: Reserva },
-  { path: '/login', component: Login },
-  { path: '/signup', component: Signup },
   { path: '/account', component: Account },
-  { path: '/admin', component: Admin, beforeEnter: (to, from, next) => {
-      try {
-        if (typeof localStorage !== 'undefined' && localStorage.getItem('isAdmin') === 'true') next()
-        else next('/')
-      } catch (e) {
-        next('/')
-      }
-    }
+  { path: '/detalle-auto', name: 'DetalleAuto', component: DetalleAuto },
+  {
+    path: '/admin',
+    component: Admin,
+    beforeEnter: adminGuard,
+    meta: { requiresAdmin: true }
   },
-  {path: '/detalle-auto',
-  name: 'DetalleAuto',
-  component: () => import('./views/DetalleAuto.vue')}
+  // Redireccionar vistas antiguas a Account con tabs
+  { path: '/login', redirect: '/account' },
+  { path: '/signup', redirect: '/account' }
 ]
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes
+  history: createWebHistory(),
+  routes
 })
 
-export default router;
+export default router

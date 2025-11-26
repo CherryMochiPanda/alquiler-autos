@@ -1,27 +1,30 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { pushToast } from '../utils/toastStore'
 import { useRoute } from 'vue-router'
+import { useNotification } from '../composables'
 import { autos } from '../data/autos'
 
 const route = useRoute()
+const { t } = useI18n()
+const notification = useNotification()
+
 const autoId = ref(route.query.auto)
 const autoSeleccionado = ref(null)
 const imagenActual = ref(0)
 
-const { t } = useI18n()
-
 onMounted(() => {
-  autoSeleccionado.value = autos.find(a => a.id === autoId.value)
+  autoSeleccionado.value = autos.find(a => a.id === autoId.value) || null
 })
 
 function siguiente() {
+  if (!autoSeleccionado.value || !autoSeleccionado.value.imagenes) return
   const total = autoSeleccionado.value.imagenes.length
   imagenActual.value = (imagenActual.value + 1) % total
 }
 
 function anterior() {
+  if (!autoSeleccionado.value || !autoSeleccionado.value.imagenes) return
   const total = autoSeleccionado.value.imagenes.length
   imagenActual.value = (imagenActual.value - 1 + total) % total
 }
@@ -35,11 +38,10 @@ const documentoNumero = ref('')
 
 const hoy = new Date().toISOString().split('T')[0]
 
-const dniValido = computed(() => /^\d{11}$/.test(documentoNumero.value))
-const telefonoValido = computed(() => /^\+?\d{8,15}$/.test(telefono.value))
+const dniValido = computed(() => /^[0-9]{7,9}$/.test(documentoNumero.value))
+const telefonoValido = computed(() => /^\+?\d{7,15}$/.test(telefono.value))
 const nombreValido = computed(() => /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]{2,}$/.test(nombre.value))
-
-
+const emailValido = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo.value))
 
 const dias = computed(() => {
   if (!fechaInicio.value || !fechaFin.value) return 0
@@ -52,30 +54,31 @@ const precioPorDia = 45
 const precioTotal = computed(() => dias.value * precioPorDia)
 
 const fechasValidas = computed(() => {
-  return (
-    (fechaInicio.value >= hoy || fechaInicio == hoy )
-    &&
-    (fechaFin.value > fechaInicio.value || fechaFin.value == fechaInicio.value)
-  )
+  if (!fechaInicio.value || !fechaFin.value) return false
+  return fechaInicio.value >= hoy && fechaFin.value > fechaInicio.value
 })
 
 const formValido = computed(() =>
   nombreValido.value &&
-  correo.value.includes('@') &&
+  emailValido.value &&
   telefonoValido.value &&
   dniValido.value &&
   fechasValidas.value
 )
 
-
 function handleReserva() {
-  pushToast(t('reservaMessages.confirmed', {
-    car: autoSeleccionado.value.nombre,
+  if (!formValido.value) {
+    notification.error(t('reserva.errors.formInvalid') || 'Por favor completa correctamente el formulario')
+    return
+  }
+
+  notification.success(t('reservaMessages.confirmed', {
+    car: autoSeleccionado.value?.nombre || '',
     start: fechaInicio.value,
     end: fechaFin.value,
     days: dias.value,
     total: precioTotal.value
-  }), 'success')
+  }))
 }
 </script>
 

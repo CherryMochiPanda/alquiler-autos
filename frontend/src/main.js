@@ -1,6 +1,8 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
+import i18n from './i18n'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -11,9 +13,17 @@ library.add(faSearch, faCalendarCheck, faClipboardCheck, faCarSide)
 library.add(faCar, faBolt, faMoneyBillWave)
 
 const app = createApp(App)
-app.component('font-awesome-icon', FontAwesomeIcon)
-import i18n from './i18n'
+const pinia = createPinia()
 
+app.component('font-awesome-icon', FontAwesomeIcon)
+
+app.use(pinia)
 app.use(router)
 app.use(i18n)
+
+// Inicializa auth store desde localStorage
+import { useAuthStore } from './stores/useAuthStore'
+const authStore = useAuthStore(pinia)
+authStore.initializeAuth()
+
 app.mount('#app')

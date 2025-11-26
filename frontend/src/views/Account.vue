@@ -1,112 +1,241 @@
 <template>
   <section class="account-wrapper">
-    <div v-if="user" class="profile-box">
+    <div v-if="isAuthenticated" class="profile-box">
       <h2>{{ $t('account.title') }}</h2>
-      <p><strong>{{ $t('account.labels.name') }}:</strong> {{ user.name || '-' }}</p>
+      <p><strong>{{ $t('account.labels.name') }}:</strong> {{ user.firstName }} {{ user.lastName }}</p>
       <p><strong>{{ $t('account.labels.email') }}:</strong> {{ user.email }}</p>
       <p><strong>{{ $t('account.labels.role') }}:</strong> {{ isAdmin ? $t('account.role.adminDemo') : $t('account.role.user') }}</p>
       <div class="profile-actions">
-        <button @click="logout">{{ $t('account.logout') }}</button>
-        <button @click="toggleAdmin">{{ isAdmin ? $t('account.admin.remove') : $t('account.admin.add') }}</button>
+        <button @click="handleLogout" :disabled="isLoading">{{ $t('account.logout') }}</button>
+        <button @click="toggleAdmin" :disabled="isLoading">{{ isAdmin ? $t('account.admin.remove') : $t('account.admin.add') }}</button>
       </div>
     </div>
 
     <div v-else class="auth-box">
-      <h2>{{ $t('account.demoTitle') }}</h2>
-
-      <div class="form-row">
-        <input v-model="name" :placeholder="$t('account.placeholders.name')" />
-      </div>
-      <div class="form-row">
-        <input v-model="email" :placeholder="$t('account.placeholders.email')" :class="{ error: email && !emailValid }"/>
-      </div>
-      <div class="form-row">
-        <input v-model="password" type="password" :placeholder="$t('account.placeholders.password')" :class="{ error: password && !passwordValid }"/>
-      </div>
-
-      <div class="form-actions">
-        <button @click="login">{{ $t('account.login') }}</button>
-        <button @click="signup">{{ $t('account.signup') }}</button>
+      <div class="auth-tabs">
+        <button 
+          v-for="tab in ['login', 'signup']"
+          :key="tab"
+          :class="['tab-button', { active: activeTab === tab }]"
+          @click="activeTab = tab"
+        >
+          {{ $t(`account.${tab}`) }}
+        </button>
       </div>
 
-      <p class="hint">{{ $t('account.hint') }}</p>
+      <!-- Login Tab -->
+      <form v-if="activeTab === 'login'" @submit.prevent="handleLogin" class="auth-form">
+        <div class="form-row">
+          <label>{{ $t('account.labels.email') }}</label>
+          <input
+            v-model="form.values.email"
+            type="email"
+            :placeholder="$t('account.placeholders.email')"
+            @blur="form.markTouched('email')"
+            :class="form.getFieldClass('email')"
+          />
+          <span v-if="form.getFieldError('email')" class="error-text">
+            {{ form.getFieldError('email') }}
+          </span>
+        </div>
+
+        <div class="form-row">
+          <label>{{ $t('account.placeholders.password') }}</label>
+          <input
+            v-model="form.values.password"
+            type="password"
+            :placeholder="$t('account.placeholders.password')"
+            @blur="form.markTouched('password')"
+            :class="form.getFieldClass('password')"
+          />
+          <span v-if="form.getFieldError('password')" class="error-text">
+            {{ form.getFieldError('password') }}
+          </span>
+        </div>
+
+        <button type="submit" :disabled="isLoading || form.isSubmitting">
+          {{ isLoading ? $t('common.loading') : $t('account.login') }}
+        </button>
+
+        <p class="hint">{{ $t('account.hint') }}</p>
+      </form>
+
+      <!-- Signup Tab -->
+      <form v-if="activeTab === 'signup'" @submit.prevent="handleSignup" class="auth-form">
+        <div class="form-row">
+          <label>{{ $t('account.labels.name') }}</label>
+          <input
+            v-model="form.values.firstName"
+            type="text"
+            placeholder="Nombre"
+            @blur="form.markTouched('firstName')"
+            :class="form.getFieldClass('firstName')"
+          />
+          <span v-if="form.getFieldError('firstName')" class="error-text">
+            {{ form.getFieldError('firstName') }}
+          </span>
+        </div>
+
+        <div class="form-row">
+          <label>{{ $t('account.labels.name') }}</label>
+          <input
+            v-model="form.values.lastName"
+            type="text"
+            placeholder="Apellido"
+            @blur="form.markTouched('lastName')"
+            :class="form.getFieldClass('lastName')"
+          />
+          <span v-if="form.getFieldError('lastName')" class="error-text">
+            {{ form.getFieldError('lastName') }}
+          </span>
+        </div>
+
+        <div class="form-row">
+          <label>{{ $t('account.labels.email') }}</label>
+          <input
+            v-model="form.values.email"
+            type="email"
+            :placeholder="$t('account.placeholders.email')"
+            @blur="form.markTouched('email')"
+            :class="form.getFieldClass('email')"
+          />
+          <span v-if="form.getFieldError('email')" class="error-text">
+            {{ form.getFieldError('email') }}
+          </span>
+        </div>
+
+        <div class="form-row">
+          <label>{{ $t('account.placeholders.password') }}</label>
+          <input
+            v-model="form.values.password"
+            type="password"
+            :placeholder="$t('account.placeholders.password')"
+            @blur="form.markTouched('password')"
+            :class="form.getFieldClass('password')"
+          />
+          <span v-if="form.getFieldError('password')" class="error-text">
+            {{ form.getFieldError('password') }}
+          </span>
+        </div>
+
+        <div class="form-row">
+          <label>Teléfono</label>
+          <input
+            v-model="form.values.phone"
+            type="tel"
+            placeholder="Teléfono"
+            @blur="form.markTouched('phone')"
+            :class="form.getFieldClass('phone')"
+          />
+          <span v-if="form.getFieldError('phone')" class="error-text">
+            {{ form.getFieldError('phone') }}
+          </span>
+        </div>
+
+        <div class="form-row">
+          <label>DNI</label>
+          <input
+            v-model="form.values.dni"
+            type="text"
+            placeholder="DNI"
+            @blur="form.markTouched('dni')"
+            :class="form.getFieldClass('dni')"
+          />
+          <span v-if="form.getFieldError('dni')" class="error-text">
+            {{ form.getFieldError('dni') }}
+          </span>
+        </div>
+
+        <button type="submit" :disabled="isLoading || form.isSubmitting">
+          {{ isLoading ? $t('common.loading') : $t('account.signup') }}
+        </button>
+
+        <p class="hint">{{ $t('account.hint') }}</p>
+      </form>
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref , computed} from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { pushToast } from '../utils/toastStore'
+import { useAuth, useForm, useNotification } from '../composables'
+import { useAdminStore } from '../stores'
 
 const router = useRouter()
-const user = ref(JSON.parse(localStorage.getItem('user') || 'null'))
-const isAdmin = ref(localStorage.getItem('isAdmin') === 'true')
-
 const { t } = useI18n()
+const { user, isAuthenticated, isAdmin, isLoading, login, logout, signup } = useAuth()
+const notification = useNotification()
+const adminStore = useAdminStore()
 
-const name = ref('')
-const email = ref('')
-const password = ref('')
+const activeTab = ref('login')
 
-const emailValid = computed(() =>
-  /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email.value)
+// Formulario de login
+const loginForm = useForm(
+  { email: '', password: '' },
+  async (values) => {
+    const result = await login(values.email, values.password)
+    if (result.success) {
+      form.resetForm()
+      router.push('/account')
+    }
+  }
 )
-const passwordValid = computed(() =>
-  /^(?=.*[A-Z])(?=.*\d).{8,}$/.test(password.value)
+
+// Formulario de signup
+const signupForm = useForm(
+  {
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    phone: '',
+    dni: ''
+  },
+  async (values) => {
+    const result = await signup(values)
+    if (result.success) {
+      signupForm.resetForm()
+      activeTab.value = 'login'
+    }
+  }
 )
 
-function persistUser(u) {
-  localStorage.setItem('user', JSON.stringify(u))
-  // keep a users list for admin demo
-  const users = JSON.parse(localStorage.getItem('users') || '[]')
-  const exists = users.find(x => x.email === u.email)
-  if (!exists) {
-    users.push(u)
-    localStorage.setItem('users', JSON.stringify(users))
+// Seleccionar form según tab activo
+const form = computed(() => activeTab.value === 'login' ? loginForm : signupForm)
+
+async function handleLogin() {
+  if (!loginForm.validateAll()) {
+    return
+  }
+  await loginForm.handleSubmit()
+}
+
+async function handleSignup() {
+  if (!signupForm.validateAll()) {
+    return
+  }
+  await signupForm.handleSubmit()
+}
+
+async function handleLogout() {
+  const result = await logout()
+  if (result.success) {
+    router.push('/')
   }
 }
 
-function login() {
-  if (!name.value) return pushToast(t('account.errors.userRequired'), 'error')
-  if (!email.value) return pushToast(t('account.errors.emailRequired'), 'error')
-  const u = { name: name.value || '', email: email.value }
-  persistUser(u)
-  const adminFlag = email.value.includes('admin')
-  localStorage.setItem('isAdmin', adminFlag ? 'true' : 'false')
-  isAdmin.value = adminFlag
-  user.value = u
-  router.push('/account')
-}
+async function toggleAdmin() {
+  if (!user.value?.id) return
 
-function signup() {
-  if (!name.value) return pushToast(t('account.errors.userRequired'), 'error')
-  if (!email.value) return pushToast(t('account.errors.emailRequired'), 'error')
-  if (!emailValid.value) return pushToast(t('account.errors.emailInvalid'), 'error')
-  if (!password.value) return pushToast(t( 'account.errors.passRequired'), 'error')
-  if (!passwordValid.value) return pushToast(t('account.errors.passInvalid'), 'error')
-  const u = { name: name.value || '', email: email.value }
-  persistUser(u)
-  const adminFlag = email.value.includes('admin')
-  localStorage.setItem('isAdmin', adminFlag ? 'true' : 'false')
-  isAdmin.value = adminFlag
-  user.value = u
-  router.push('/account')
-}
+  const newIsAdmin = !isAdmin.value
+  const result = await adminStore.updateUserRole(user.value.id, newIsAdmin)
 
-function logout() {
-  localStorage.removeItem('user')
-  localStorage.removeItem('isAdmin')
-  user.value = null
-  isAdmin.value = false
-  router.push('/')
-}
-
-function toggleAdmin() {
-  const newVal = !isAdmin.value
-  localStorage.setItem('isAdmin', newVal ? 'true' : 'false')
-  isAdmin.value = newVal
+  if (result.success) {
+    // Actualizar user local
+    user.value.isAdmin = newIsAdmin
+  }
 }
 </script>
 
@@ -120,15 +249,18 @@ function toggleAdmin() {
     opacity: 1;
     transform: translateY(0);
   }
-  
 }
+
 .account-wrapper {
   padding: 2rem;
   display: flex;
   justify-content: center;
   background: var(--color-wrapper);
+  min-height: calc(100vh - 80px);
 }
-.profile-box, .auth-box {
+
+.profile-box,
+.auth-box {
   width: 100%;
   max-width: 480px;
   background: var(--box-bg);
@@ -140,51 +272,179 @@ function toggleAdmin() {
   box-shadow: 0 0 20px var(--color-sombra);
   animation: fadeIn 0.6s ease;
 }
+
+.profile-box h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  color: var(--accent-color);
+}
+
+.profile-box p {
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.profile-actions button {
+  flex: 1;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--accent-color);
+  color: var(--text-color-bold);
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.profile-actions button:hover:not(:disabled) {
+  background-color: #00c0ff;
+}
+
+.profile-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Auth Tabs */
+.auth-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tab-button {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  background: none;
+  color: var(--text-color);
+  cursor: pointer;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.tab-button.active {
+  color: var(--accent-color);
+  border-bottom-color: var(--accent-color);
+}
+
+.tab-button:hover:not(.active) {
+  color: var(--accent-color);
+  opacity: 0.7;
+}
+
+/* Auth Form */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .auth-box h2 {
   text-align: center;
   margin-bottom: 1.5rem;
-  font-size: 1.5;
+  font-size: 1.5rem;
   color: var(--accent-color);
 }
 
 .form-row {
-  margin-bottom: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-row label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-color);
 }
 
 .form-row input {
   width: 100%;
   padding: 0.6rem;
   border-radius: 8px;
-  border: none;
-  background-color:var(--color-caja);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: var(--color-caja);
   color: var(--text-color);
-  transition: border 0.3s ease;
+  transition: all 0.3s ease;
+  font-size: 1rem;
 }
 
-.form-actions , .profile-actions {
-  display: flex;
-  gap: 1rem;
+.form-row input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 8px rgba(0, 192, 255, 0.2);
+}
+
+.form-row input.has-error {
+  border-color: #ff4d4d;
+}
+
+.form-row input.is-valid {
+  border-color: #4ade80;
+}
+
+.error-text {
+  font-size: 0.8rem;
+  color: #ff4d4d;
+  margin-top: 0.25rem;
+}
+
+.auth-form button[type='submit'] {
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--accent-color);
+  color: var(--text-color-bold);
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
   margin-top: 1rem;
 }
 
-.form-actions button, .profile-actions button {
-  border: none;
-  cursor: pointer;
-  background-color: var(--accent-color);
-  transition: background-color 0.3s ease;
-  color: var(--text-color-bold);
-  padding: 0.8rem 1.2rem;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.form-row input.error {
-  border: 1px solid #ff4d4d;
-}
-
-.auth-box button:hover, .form-row button:hover {
+.auth-form button[type='submit']:hover:not(:disabled) {
   background-color: #00c0ff;
 }
-.hint { margin-top: 1rem; color: var(--color-Tgrand); font-size: 0.9rem; }
+
+.auth-form button[type='submit']:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.hint {
+  margin-top: 1rem;
+  color: var(--color-Tgrand);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .account-wrapper {
+    padding: 1rem;
+  }
+
+  .profile-box,
+  .auth-box {
+    max-width: 100%;
+    padding: 1.5rem;
+  }
+
+  .profile-actions,
+  .auth-tabs {
+    flex-direction: column;
+  }
+
+  .profile-actions button {
+    width: 100%;
+  }
+}
 </style>
