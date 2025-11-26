@@ -320,11 +320,12 @@ function viewCar(id) {
   transform: translateX(-50%);
   width: 120%;
   height: 120%;
-  background: radial-gradient(circle at 30% 30%, #00ccff33, transparent 70%),
-              radial-gradient(circle at 70% 70%, #006efd33, transparent 70%);
+  background: radial-gradient(circle at 30% 50%, #00f7ffc4, transparent 50%),
+              radial-gradient(circle at 80% 70%, #6200ffc4, transparent 30%),
+              radial-gradient(circle at 70% 30%, #00a2ffc4, transparent 40%);
   filter: blur(80px);
   z-index: 0;
-  animation: moveGlow 20s ease-in-out infinite alternate;
+  animation: moveGlow 2s ease-in-out infinite alternate;
 }
 
 .hero-content {
@@ -449,11 +450,13 @@ p {
   padding: 2rem;
   text-align: center;
   backdrop-filter: blur(10px);
-  transition: transform 0.3s ease;
+  /*transition: transform 0.3s ease;*/
+  transition: transform 420ms cubic-bezier(.22,.9,.3,1), box-shadow 420ms cubic-bezier(.22,.9,.3,1);
 }
 
 .feature:hover {
   transform: translateY(-5px);
+  transition: transform 420ms cubic-bezier(.22,.9,.3,1), box-shadow 420ms cubic-bezier(.22,.9,.3,1);
   box-shadow: 0 0 15px var(--accent-color);
 }
 
@@ -753,10 +756,10 @@ p {
 
 @keyframes moveGlow {
   0% {
-    transform: translateX(-50%) translateY(0);
+    transform: translateX(-50%) translateY(5%);
   }
   100% {
-    transform: translateX(-50%) translateY(-20px);
+    transform: translateX(-50%) translateY(-5%);
   }
 }
 
@@ -804,12 +807,14 @@ p {
   padding: 1.5rem;
   font-size: 1rem;
   backdrop-filter: blur(10px);
-  transition: transform 0.3s ease;
+  /*transition: transform 0.3s ease;*/
+  transition: transform 420ms cubic-bezier(.22,.9,.3,1), box-shadow 420ms cubic-bezier(.22,.9,.3,1);
 }
 
 .car-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 0 15px var(--accent-color);
+  transition: transform 420ms cubic-bezier(.22,.9,.3,1), box-shadow 420ms cubic-bezier(.22,.9,.3,1);
 }
 
 .car-card img {

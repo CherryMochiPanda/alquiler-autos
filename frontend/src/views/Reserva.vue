@@ -148,7 +148,8 @@ function handleReserva() {
   justify-content: center;
   align-items: flex-start;
   padding: 2rem;
-  background-color: var(--bg-color);
+  /*background-color: var(--bg-color);*/
+  background: var(--color-wrapper);
 }
 
 .auto-preview,

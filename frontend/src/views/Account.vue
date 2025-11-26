@@ -127,7 +127,6 @@ function toggleAdmin() {
   display: flex;
   justify-content: center;
   background: var(--color-wrapper);
-  height: 30rem;
 }
 .profile-box, .auth-box {
   width: 100%;

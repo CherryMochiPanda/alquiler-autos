@@ -39,6 +39,9 @@ onMounted(() => {
   --color-sombra:rgba(17, 126, 126, 0.392);
   --box-bg: rgba(255, 255, 255, 0.8);
   --neon-shadow: 0 0 10px rgba(17, 126, 126, 0.392);
+  --cicle1: #5eff00;
+  --cicle2: #ff6600;
+  --cicle3: #8400ff;
 }
 
 .dark {
@@ -53,13 +56,16 @@ onMounted(() => {
   --color-sombra:rgba(0, 255, 255, 0.1);
   --box-bg: rgba(255, 255, 255, 0.05);
   --neon-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+  --cicle1: #00f7ff33;
+  --cicle2: #6f00ff33;
+  --cicle3: #ff00ff33;
 }
 
 #app {
   margin: 0;
   padding: 0;
   width: 100%;
-  min-height: 100vh;
+  /*min-height: 100vh;*/
   display: flex;
   flex-direction: column;
 }
@@ -71,6 +77,7 @@ body {
   width: 100%;
   overflow-x: hidden;
   background-color: var(--bg-color);
+  /*background: var(--color-wrapper);*/
   color: var(--text-color);
   font-family: 'Segoe UI', sans-serif;
   min-height: 100%;

@@ -91,10 +91,12 @@ function backToCatalog() {
 <style scoped>
 .catalogo-wrapper {
   padding: 2rem;
-  background-color: var(--bg-color);
+  background: var(--color-wrapper);
   color: var(--text-color);
 }
-
+.category-block h3 {
+  border-top: 2px solid var(--accent-color);
+}
 .catalogo-grid {
   display: flex;
   flex-wrap: wrap;
