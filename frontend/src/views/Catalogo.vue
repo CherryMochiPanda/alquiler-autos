@@ -173,7 +173,7 @@ function backToCatalog() {
 
 .card-buttons button {
   background-color: var(--accent-color);
-  color: #000;
+  color: var(--text-color);
   border: none;
   padding: 0.6rem 1rem;
   border-radius: 8px;

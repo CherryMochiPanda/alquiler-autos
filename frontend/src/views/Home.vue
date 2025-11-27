@@ -320,9 +320,9 @@ function viewCar(id) {
   transform: translateX(-50%);
   width: 120%;
   height: 120%;
-  background: radial-gradient(circle at 30% 50%, #00f7ffc4, transparent 50%),
-              radial-gradient(circle at 80% 70%, #6200ffc4, transparent 30%),
-              radial-gradient(circle at 70% 30%, #00a2ffc4, transparent 40%);
+  background: radial-gradient(circle at 30% 50%, var(--accent-color), transparent 50%),
+              radial-gradient(circle at 80% 70%, var(--accent-color), transparent 30%),
+              radial-gradient(circle at 70% 30%, var(--accent-color), transparent 40%);
   filter: blur(80px);
   z-index: 0;
   animation: moveGlow 2s ease-in-out infinite alternate;
@@ -361,7 +361,7 @@ p {
 
 .btn {
   background-color: var(--accent-color);
-  color: var(--text-color-bold);
+  color: var(--text-on-accent);
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 8px;
@@ -709,7 +709,7 @@ p {
 /* highlight the circle when active (glow) */
 .step.active .circle {
   background: rgb(var(--active-rgb, 0,200,255));
-  color: #000;
+  color: var(--text-color);
   border-color: transparent;
   box-shadow: 0 14px 40px rgba(0,0,0,0.22), 0 0 40px rgba(var(--active-rgb, 0,200,255),0.16);
   transform: scale(1.06);
@@ -766,16 +766,16 @@ p {
 
 @keyframes glowShift {
   0% {
-    text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff;
-    border-color: #00f0ff;
+    text-shadow: 0 0 10px var(--accent-color), 0 0 20px var(--accent-color);
+    border-color: var(--accent-color);
   }
   50% {
-    text-shadow: 0 0 10px #0077cc, 0 0 20px #0077cc;
-    border-color: #0077cc;
+    text-shadow: 0 0 10px var(--accent-color), 0 0 20px var(--accent-color);
+    border-color: var(--accent-color);
   }
   100% {
-    text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff;
-    border-color: #00f0ff;
+    text-shadow: 0 0 10px var(--accent-color), 0 0 20px var(--accent-color);
+    border-color: var(--accent-color);
   }
 }
 
@@ -846,8 +846,8 @@ p {
 }
 
 .car-card button:hover {
-  background-color: #00c0ff;
-  color: #000000;
+  background-color: var(--accent-color);
+  color: var(--text-color);
 }
 
 .testimonials {
@@ -901,12 +901,12 @@ p {
 .image-placeholder {
   width: 100%;
   height: 180px;
-  background-color: #2c2c2c;
+  background-color: var(--box-bg);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #aaa;
+  color: var(--muted-color);
   font-size: 0.9rem;
   font-style: italic;
   border: 1px dashed var(--accent-color);

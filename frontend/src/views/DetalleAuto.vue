@@ -124,7 +124,7 @@ function anterior() {
 
 .reservar-btn {
   background-color: var(--accent-color);
-  color: var(--text-color-bold);
+  color: var(--text-on-accent);
   border: none;
   padding: 0.8rem 1.2rem;
   border-radius: 8px;
@@ -155,7 +155,7 @@ function anterior() {
 
 .detalle-error button {
   background-color: var(--accent-color);
-  color: #000;
+  color: var(--text-color);
   border: none;
   padding: 0.8rem 1.2rem;
   border-radius: 8px;

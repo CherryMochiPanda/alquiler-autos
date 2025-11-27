@@ -95,6 +95,6 @@ onMounted(load)
 .reservation-card { background: var(--box-bg); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border:1px solid rgba(255,255,255,0.06);} 
 .row { display:flex; justify-content:space-between; gap:1rem; margin-bottom:0.5rem; }
 .actions { display:flex; justify-content:flex-end; }
-.btn-cancel { background: #ff5252; color: #fff; border:none; padding:0.5rem 0.8rem; border-radius:6px; cursor:pointer }
+.btn-cancel { background: var(--danger-color); color: var(--text-on-danger); border:none; padding:0.5rem 0.8rem; border-radius:6px; cursor:pointer }
 .empty-state { text-align:center; color:var(--color-Tgrand); padding:2rem }
 </style>

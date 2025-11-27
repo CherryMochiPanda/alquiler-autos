@@ -10,7 +10,7 @@
       <div class="edit-phone form-row">
         <label>{{ $t('account.labels.phone') }}</label>
         <div class="phone-row">
-          <input class="input" v-model="phone" type="tel" :disabled="!editingPhone" placeholder="+53 00000000" />
+          <input class="input" v-model="phone" type="tel" :disabled="!editingPhone" placeholder="+53 00000000" @input="onAccountPhoneInput" />
           <div class="form-actions">
             <button v-if="editingPhone" class="btn-primary" @click="savePhone">{{ $t('account.savePhone') }}</button>
             <button v-if="editingPhone" class="btn-secondary" @click="cancelEdit">{{ $t('account.cancelEdit') }}</button>
@@ -23,8 +23,8 @@
       <div class="change-password form-row">
         <label>{{ $t('account.changePassword') }}</label>
         <div class="pw-grid">
-          <input class="input" v-model="password" type="password" :placeholder="t('account.newPassword')" />
-          <input class="input" v-model="confirmPassword" type="password" :placeholder="t('account.confirmPassword')" />
+          <input class="input" v-model="password" type="password" :placeholder="$t('account.placeholders.password')" />
+          <input class="input" v-model="confirmPassword" type="password" :placeholder="$t('signup.placeholders.confirmPassword')" />
           <div class="form-actions">
             <button class="btn-primary" @click="updatePassword">{{ $t('account.savePassword') }}</button>
           </div>
@@ -286,6 +286,17 @@ function onPhoneInput(e) {
   signupForm.setFieldValue('phone', final)
 }
 
+function onAccountPhoneInput(e) {
+  // Similar sanitizer but writes to the account `phone` ref
+  let v = String(e.target.value)
+  if (!v.startsWith('+53')) {
+    v = '+53 ' + v.replace(/[^0-9]/g, '')
+  }
+  const parts = v.split(/\s+/)
+  const rest = (parts[1] || '').replace(/[^0-9]/g, '').slice(0, 8)
+  phone.value = '+53 ' + rest
+}
+
 function onDniInput(e) {
   let v = String(e.target.value).replace(/[^0-9]/g, '').slice(0, 11)
   signupForm.setFieldValue('dni', v)
@@ -423,14 +434,14 @@ function updatePassword() {
   border: none;
   border-radius: 8px;
   background-color: var(--accent-color);
-  color: var(--text-color-bold);
+  color: var(--text-on-accent);
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 .profile-actions button:hover:not(:disabled) {
-  background-color: #00c0ff;
+  background-color: var(--accent-color);
 }
 
 .profile-actions button:disabled {
@@ -465,7 +476,7 @@ function updatePassword() {
 }
 
 .form-actions { display:flex; gap:0.5rem; }
-.btn-primary { background-color: var(--accent-color); color: var(--text-color-bold); border:none; padding:0.6rem 1rem; border-radius:8px; cursor:pointer }
+.btn-primary { background-color: var(--accent-color); color: var(--text-on-accent); border:none; padding:0.6rem 1rem; border-radius:8px; cursor:pointer }
 .btn-secondary { background:transparent; border:2px solid var(--accent-color); color:var(--accent-color); padding:0.5rem .9rem; border-radius:8px; cursor:pointer }
 
 /* Auth Tabs */
@@ -542,16 +553,16 @@ function updatePassword() {
 }
 
 .form-row input.has-error {
-  border-color: #ff4d4d;
+  border-color: var(--danger-color);
 }
 
 .form-row input.is-valid {
-  border-color: #4ade80;
+  border-color: var(--success-color);
 }
 
 .error-text {
   font-size: 0.8rem;
-  color: #ff4d4d;
+  color: var(--danger-color);
   margin-top: 0.25rem;
 }
 
@@ -560,7 +571,7 @@ function updatePassword() {
   border: none;
   border-radius: 8px;
   background-color: var(--accent-color);
-  color: var(--text-color-bold);
+  color: var(--text-on-accent);
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -568,7 +579,7 @@ function updatePassword() {
 }
 
 .auth-form button[type='submit']:hover:not(:disabled) {
-  background-color: #00c0ff;
+  background-color: var(--accent-color);
 }
 
 .auth-form button[type='submit']:disabled {

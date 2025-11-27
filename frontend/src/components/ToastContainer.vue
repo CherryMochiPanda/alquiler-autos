@@ -1,8 +1,8 @@
 <template>
   <div class="toast-root" aria-live="polite">
-    <div v-for="t in list" :key="t.id" class="toast" :class="t.type">
+    <div v-for="t in notification.toasts" :key="t.id" class="toast" :class="t.type">
       <div class="toast-message">{{ t.message }}</div>
-      <button type="button" class="close-btn" @click.stop="remove(t.id)">×</button>
+      <button type="button" class="close-btn" @click.stop="notification.removeToast(t.id)">×</button>
     </div>
   </div>
 </template>
@@ -11,8 +11,6 @@
 import { useNotificationStore } from '../stores/useNotificationStore'
 
 const notification = useNotificationStore()
-const list = notification.toasts
-const remove = id => notification.removeToast(id)
 </script>
 
 <style scoped>
@@ -27,9 +25,9 @@ const remove = id => notification.removeToast(id)
    pointer-events: none;
  }
  
- .toast {
+  .toast {
    background: rgba(0, 0, 0, 0.8);
-   color: #fff;
+   color: var(--text-color);
    padding: 0.75rem 1rem;
    border-radius: 8px;
    min-width: 280px;
@@ -54,21 +52,25 @@ const remove = id => notification.removeToast(id)
  .toast-info {
    background: rgba(33, 150, 243, 0.9);
    border-color: rgba(33, 150, 243, 0.5);
+  color: var(--text-on-accent);
  }
  
  .toast-success {
    background: rgba(76, 175, 80, 0.9);
    border-color: rgba(76, 175, 80, 0.5);
+  color: var(--text-on-accent);
  }
  
  .toast-warning {
    background: rgba(255, 152, 0, 0.9);
    border-color: rgba(255, 152, 0, 0.5);
+  color: var(--text-on-accent);
  }
  
  .toast-error {
    background: rgba(244, 67, 54, 0.9);
    border-color: rgba(244, 67, 54, 0.5);
+  color: var(--text-on-accent);
  }
  
  .close-btn {

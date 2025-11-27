@@ -105,7 +105,7 @@ function prev() {
 }
 .btn-primary { 
   background-color: var(--accent-color); 
-  color: var(--text-color-bold); 
+  color: var(--text-on-accent); 
   border:none; 
   padding:0.6rem 1rem; 
   border-radius:8px;   

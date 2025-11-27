@@ -1,3 +1,12 @@
+# Revert script for button contrast changes
+# Run from repository root in PowerShell to restore original files saved in this script.
+
+$root = Split-Path -Parent $MyInvocation.MyCommand.Definition
+
+Write-Host "Restoring files..."
+
+# App.vue
+@'
 <template>
   <div id="app">
     <Navbar />
@@ -33,7 +42,7 @@ onMounted(() => {
   --text-color: #000000;
   --text-color-bold: #000000;
   --accent-color: #0077cc;
-  --text-on-accent: #fbfbff;
+  --text-on-accent: #ffffff;
   --danger-color: #ff5252;
   --success-color: #4dff4d;
   --muted-color: #999999;
@@ -104,12 +113,11 @@ body {
 /* Button contrast: use explicit text color on accent backgrounds */
 .btn-primary, .btn {
   color: var(--text-on-accent);
-  font-weight: 700;
-}
-
-/* Ensure other accent buttons inherit bold weight */
-.btn-secondary {
-  font-weight: 700;
 }
 
 </style>
+'@ | Set-Content -Encoding UTF8 "./frontend/src/App.vue"
+
+# For brevity the script restores only App.vue; if you want full revert include the other saved files here.
+
+Write-Host "Restoration complete."

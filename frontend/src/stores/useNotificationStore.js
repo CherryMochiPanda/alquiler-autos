@@ -24,7 +24,14 @@ export const useNotificationStore = defineStore('notification', () => {
     // Auto-remover después del duration
     if (duration > 0) {
       const timer = setTimeout(() => {
-        removeToast(id)
+        // sanity: only remove if still present
+        if (toasts.value.some(t => t.id === id)) {
+          removeToast(id)
+        }
+        if (timers[id]) {
+          clearTimeout(timers[id])
+          delete timers[id]
+        }
       }, duration)
       timers[id] = timer
     }
@@ -36,12 +43,12 @@ export const useNotificationStore = defineStore('notification', () => {
    * Elimina un toast por ID
    */
   function removeToast(id) {
-    toasts.value = toasts.value.filter(t => t.id !== id)
-    // clear any pending timer
+    // clear any pending timer first
     if (timers[id]) {
       clearTimeout(timers[id])
       delete timers[id]
     }
+    toasts.value = toasts.value.filter(t => t.id !== id)
   }
 
   /**
@@ -76,6 +83,11 @@ export const useNotificationStore = defineStore('notification', () => {
    * Limpia todos los toasts
    */
   function clearAll() {
+    // clear timers
+    Object.keys(timers).forEach(k => {
+      try { clearTimeout(timers[k]) } catch (e) {}
+      delete timers[k]
+    })
     toasts.value = []
   }
 

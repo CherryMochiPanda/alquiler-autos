@@ -114,18 +114,14 @@ watch([pickupOfficeSelected, pickupDate, pickupTime, deliveryDate, deliveryTime,
   }
 })
 
-/**
- * Calcula fecha mínima para recogida (hoy + 1 día a las 00:00)
- */
+// Calcula fecha mínima para recogida (hoy + 1 día a las 00:00)
 function getMinPickupDate() {
   const tomorrow = new Date(hoy)
   tomorrow.setDate(tomorrow.getDate() + 1)
   return tomorrow.toISOString().split('T')[0]
 }
 
-/**
- * Calcula fecha mínima para entrega basada en recogida + minDias
- */
+// Calcula fecha mínima para entrega basada en recogida + minDias
 function getMinDeliveryDate() {
   if (!pickupDate.value) {
     const min = new Date(hoy)
@@ -234,7 +230,6 @@ onMounted(() => {
 
 <template>
   <div v-if="autoSeleccionado" class="reserva-layout">
-    <!-- Auto Preview Section -->
     <div class="auto-preview">
       <h3>{{ autoSeleccionado.nombre }}</h3>
       <div class="carousel">
@@ -255,11 +250,9 @@ onMounted(() => {
       </ul>
     </div>
 
-    <!-- Reservation Form Section -->
     <div class="reserva-box">
       <h2>Nueva Reserva</h2>
       <form @submit.prevent="handleAddToCart">
-        <!-- Province Selection -->
         <div class="form-group">
           <label>Destino</label>
           <select v-model="provinceSelected" required>
@@ -270,7 +263,6 @@ onMounted(() => {
           </select>
         </div>
 
-        <!-- Pickup Office (offices filtered by province) -->
         <div class="form-group">
           <label>Lugar de Recogida</label>
           <select v-model="pickupOfficeSelected" :disabled="!provinceSelected" required>
@@ -281,7 +273,6 @@ onMounted(() => {
           </select>
         </div>
 
-        <!-- Delivery Office (offices filtered by province) -->
         <div class="form-group">
           <label>Lugar de Entrega</label>
           <select v-model="deliveryOfficeSelected" :disabled="!provinceSelected" required>
@@ -292,7 +283,6 @@ onMounted(() => {
           </select>
         </div>
 
-        <!-- Pickup Date + Time (separados, lado a lado) -->
         <div class="form-group">
           <label>Recogida</label>
           <div class="date-time-row">
@@ -319,7 +309,6 @@ onMounted(() => {
           </small>
         </div>
 
-        <!-- Delivery Date + Time (lado a lado) -->
         <div class="form-group">
           <label>Entrega</label>
           <div class="date-time-row">
@@ -349,7 +338,6 @@ onMounted(() => {
           </small>
         </div>
 
-        <!-- Hire driver option (only show if driver available) -->
         <div v-if="driverCheckStatus && driverCheckStatus.available" class="form-group checkbox-group">
           <label>
             <input type="checkbox" v-model="hireDriver" />
@@ -357,7 +345,6 @@ onMounted(() => {
           </label>
         </div>
 
-        <!-- Summary -->
         <div class="resumen">
           <p><strong>Días de renta:</strong> {{ dias }} día(s)</p>
           <p><strong>Precio por día:</strong> ${{ precioPorDia }}</p>
@@ -367,7 +354,6 @@ onMounted(() => {
           </p>
         </div>
 
-        <!-- Buttons -->
         <div class="button-group">
           <button type="button" @click="goBack" class="btn-back">
             ← Regresar
@@ -535,7 +521,7 @@ onMounted(() => {
 }
 
 .form-group input.error {
-  border-color: #ff4d4d;
+  border-color: var(--danger-color);
 }
 
 .form-group input:disabled,
@@ -545,7 +531,7 @@ onMounted(() => {
 }
 
 .error-msg {
-  color: #ff4d4d;
+  color: var(--danger-color);
   font-size: 0.8rem;
   margin-top: -0.3rem;
 }
@@ -557,11 +543,11 @@ onMounted(() => {
 }
 
 .success-msg {
-  color: #4dff4d;
+  color: var(--success-color);
   font-size: 0.85rem;
   padding: 0.5rem;
   background: rgba(77, 255, 77, 0.1);
-  border-left: 3px solid #4dff4d;
+  border-left: 3px solid var(--success-color);
   border-radius: 4px;
 }
 
@@ -616,8 +602,8 @@ onMounted(() => {
 
 .btn-remove {
   background-color: rgba(255, 77, 77, 0.2);
-  color: #ff4d4d;
-  border: 1px solid #ff4d4d;
+  color: var(--danger-color);
+  border: 1px solid var(--danger-color);
   padding: 0.6rem 1rem;
   border-radius: 6px;
   cursor: pointer;
@@ -627,7 +613,7 @@ onMounted(() => {
 }
 
 .btn-remove:hover {
-  background-color: #ff4d4d;
+  background-color: var(--danger-color);
   color: white;
 }
 
@@ -645,7 +631,7 @@ onMounted(() => {
 
 .btn-add-driver:hover {
   background-color: var(--accent-color);
-  color: #000;
+  color: var(--text-color);
 }
 
 .resumen {
@@ -702,7 +688,7 @@ onMounted(() => {
 
 .btn-submit {
   background-color: var(--accent-color);
-  color: #000;
+  color: var(--text-color);
 }
 
 .btn-submit:hover:not(:disabled) {
@@ -711,7 +697,7 @@ onMounted(() => {
 }
 
 .btn-submit:disabled {
-  background-color: #999;
+  background-color: var(--muted-color);
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -730,7 +716,7 @@ onMounted(() => {
 
 .reserva-error button {
   background-color: var(--accent-color);
-  color: #000;
+  color: var(--text-color);
   border: none;
   padding: 0.8rem 1.5rem;
   border-radius: 8px;

@@ -74,7 +74,26 @@ const messages = {
         password: 'Minimum 8 characters, 1 uppercase and 1 number.'
       },
       submit: 'Sign in',
-      noAccount: "Don't have an account? Create one"
+      noAccount: "Don't have an account? Create one",
+      notRegistered: 'Correo no registrado.',
+      wrongPassword: 'Contraseña incorrecta.',
+      welcome: 'Bienvenido, {name}'
+    },
+    login: {
+      title: 'Login',
+      placeholders: {
+        email: 'Email',
+        password: 'Password'
+      },
+      errors: {
+        email: 'Must be a valid email address.',
+        password: 'Minimum 8 characters, 1 uppercase and 1 number.'
+      },
+      submit: 'Sign in',
+      noAccount: "Don't have an account? Create one",
+      notRegistered: 'Email not registered.',
+      wrongPassword: 'Incorrect password.',
+      welcome: 'Welcome, {name}'
     },
     signup: {
       title: 'Crear cuenta',
@@ -121,16 +140,13 @@ const messages = {
       back: 'Volver al catálogo'
     },
     
-    login: {
-      notRegistered: 'Correo no registrado.',
-      wrongPassword: 'Contraseña incorrecta.',
-      welcome: 'Bienvenido, {name}'
-    },
+    /* login handled above */
     account: {
       title: 'Mi cuenta',
       labels: {
         name: 'Nombre',
         email: 'Correo',
+        phone: 'Teléfono',
         role: 'Rol'
       },
       role: {
@@ -152,10 +168,16 @@ const messages = {
         email: 'Correo electrónico',
         password: 'Contraseña'
       },
+      changePassword: 'Cambiar contraseña',
+      savePassword: 'Guardar contraseña',
+      success: {
+        passwordChanged: 'Contraseña actualizada'
+      },
       login: 'Iniciar sesión (demo)',
       signup: 'Crear cuenta (demo)',
       hint: 'Demo: cualquier email sirve. Si el correo contiene "admin" se marcará como admin.',
       errors: {
+        formInvalid: 'Formulario inválido',
         userRequired: 'Introduce un usuario',
         emailRequired: 'Introduce un correo',
         passRequired: 'Introduce una contraseña',
@@ -323,11 +345,7 @@ const messages = {
       toggleDarkOn: 'Enable dark theme',
       toggleDarkOff: 'Disable dark theme'
     },
-    login: {
-      notRegistered: 'Email not registered.',
-      wrongPassword: 'Incorrect password.',
-      welcome: 'Welcome, {name}'
-    },
+    /* login handled above */
     reservaMessages: {
       confirmed: 'The reservation is confirmed for {car}!\nFrom {start} to {end} ({days} days)\nEstimated total: ${total}'
     },
@@ -356,6 +374,7 @@ const messages = {
       labels: {
         name: 'Name',
         email: 'Email',
+        phone: 'Phone',
         role: 'Role'
       },
       role: {
@@ -377,10 +396,16 @@ const messages = {
         email: 'Email',
         password: 'Password'
       },
+      changePassword: 'Change password',
+      savePassword: 'Save password',
+      success: {
+        passwordChanged: 'Password updated'
+      },
       login: 'Sign in (demo)',
       signup: 'Sign up (demo)',
       hint: 'Demo: any email works. Email containing "admin" will be marked as admin.',
       errors: {
+        formInvalid: 'Please complete the form correctly',
         emailRequired: 'Please enter an email',
         userRequired: 'Please enter an User name',
         passRequired: 'Please enter a password',

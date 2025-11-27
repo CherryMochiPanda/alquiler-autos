@@ -406,7 +406,7 @@ function goHome() {
 .tab-btn.active {
   background: var(--accent-color);
   border-color: var(--accent-color);
-  color: #000;
+  color: var(--text-color);
 }
 
 .badge {
@@ -526,12 +526,12 @@ function goHome() {
 
 .role-badge.admin {
   background: rgba(255, 193, 7, 0.2);
-  color: #ffc107;
+  color: var(--accent-color);
 }
 
 .role-badge.user {
   background: rgba(76, 175, 80, 0.2);
-  color: #4ade80;
+  color: var(--success-color);
 }
 
 .actions-cell {
@@ -640,11 +640,11 @@ function goHome() {
 
 .btn-primary {
   background: var(--accent-color);
-  color: #000;
+  color: var(--text-color);
 }
 
 .btn-primary:hover {
-  background: #00c0ff;
+  background: var(--accent-color);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 192, 255, 0.3);
 }
@@ -662,7 +662,7 @@ function goHome() {
 
 .btn-warning {
   background: rgba(255, 193, 7, 0.2);
-  color: #ffc107;
+  color: var(--accent-color);
   border: 1px solid rgba(255, 193, 7, 0.5);
 }
 
@@ -672,7 +672,7 @@ function goHome() {
 
 .btn-danger {
   background: rgba(244, 67, 54, 0.2);
-  color: #f44336;
+  color: var(--danger-color);
   border: 1px solid rgba(244, 67, 54, 0.5);
 }
 
