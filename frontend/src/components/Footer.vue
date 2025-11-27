@@ -1,14 +1,10 @@
 <template>
   <footer class="footer">
-    <p>{{ t('footer.copyright', { year }) }}</p>
+    <div class="footer-inner">
+      <p>&copy; 2025 Alquiler Autos. Todos los derechos reservados.</p>
+    </div>
   </footer>
 </template>
-
-<script setup>
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
-const year = new Date().getFullYear()
-</script>
 
 <style scoped>
 .footer {
@@ -19,9 +15,17 @@ const year = new Date().getFullYear()
   background-color: var(--nav-bg);
   border-top: 1px solid var(--divider-color);
   color: var(--text-color);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   margin-top: auto;
-  font-size: 1rem;
+}
+
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
 

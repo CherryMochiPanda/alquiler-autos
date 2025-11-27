@@ -1,13 +1,44 @@
 <template>
   <section class="account-wrapper">
     <div v-if="isAuthenticated" class="profile-box">
-      <h2>{{ $t('account.title') }}</h2>
-      <p><strong>{{ $t('account.labels.name') }}:</strong> {{ user.firstName }} {{ user.lastName }}</p>
-      <p><strong>{{ $t('account.labels.email') }}:</strong> {{ user.email }}</p>
-      <p><strong>{{ $t('account.labels.role') }}:</strong> {{ isAdmin ? $t('account.role.adminDemo') : $t('account.role.user') }}</p>
+      <h2>{{ t('account.title') }}</h2>
+      <p><strong>{{ t('account.labels.name') }}:</strong> {{ user?.firstName }} {{ user?.lastName }}</p>
+      <p><strong>{{ t('account.labels.email') }}:</strong> {{ user?.email }}</p>
+      <p><strong>{{ t('account.labels.role') }}:</strong> {{ isAdmin ? t('account.role.adminDemo') : t('account.role.user') }}</p>
+
+      <!-- Edit Phone Section -->
+      <div class="edit-phone form-row">
+        <label>{{ $t('account.labels.phone') }}</label>
+        <div class="phone-row">
+          <input class="input" v-model="phone" type="tel" :disabled="!editingPhone" placeholder="+53 00000000" />
+          <div class="form-actions">
+            <button v-if="editingPhone" class="btn-primary" @click="savePhone">{{ $t('account.savePhone') }}</button>
+            <button v-if="editingPhone" class="btn-secondary" @click="cancelEdit">{{ $t('account.cancelEdit') }}</button>
+            <button v-else class="btn-secondary" @click="editingPhone = true">{{ $t('account.editPhone') }}</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Change Password Section -->
+      <div class="change-password form-row">
+        <label>{{ $t('account.changePassword') }}</label>
+        <div class="pw-grid">
+          <input class="input" v-model="password" type="password" :placeholder="t('account.newPassword')" />
+          <input class="input" v-model="confirmPassword" type="password" :placeholder="t('account.confirmPassword')" />
+          <div class="form-actions">
+            <button class="btn-primary" @click="updatePassword">{{ $t('account.savePassword') }}</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reservations Dashboard -->
+      <div class="reservations-dashboard">
+        <h3>{{ $t('account.myReservations') }}</h3>
+        <UserReservations />
+      </div>
+
       <div class="profile-actions">
         <button @click="handleLogout" :disabled="isLoading">{{ $t('account.logout') }}</button>
-        <button @click="toggleAdmin" :disabled="isLoading">{{ isAdmin ? $t('account.admin.remove') : $t('account.admin.add') }}</button>
       </div>
     </div>
 
@@ -53,7 +84,7 @@
           </span>
         </div>
 
-        <button type="submit" :disabled="isLoading || form.isSubmitting">
+        <button type="submit">
           {{ isLoading ? $t('common.loading') : $t('account.login') }}
         </button>
 
@@ -65,11 +96,12 @@
         <div class="form-row">
           <label>{{ $t('account.labels.name') }}</label>
           <input
-            v-model="form.values.firstName"
+            v-model="signupForm.values.firstName"
             type="text"
             placeholder="Nombre"
-            @blur="form.markTouched('firstName')"
-            :class="form.getFieldClass('firstName')"
+            @blur="signupForm.markTouched('firstName')"
+            @input="onFirstNameInput"
+            :class="signupForm.getFieldClass('firstName')"
           />
           <span v-if="form.getFieldError('firstName')" class="error-text">
             {{ form.getFieldError('firstName') }}
@@ -79,11 +111,12 @@
         <div class="form-row">
           <label>{{ $t('account.labels.name') }}</label>
           <input
-            v-model="form.values.lastName"
+            v-model="signupForm.values.lastName"
             type="text"
             placeholder="Apellido"
-            @blur="form.markTouched('lastName')"
-            :class="form.getFieldClass('lastName')"
+            @blur="signupForm.markTouched('lastName')"
+            @input="onLastNameInput"
+            :class="signupForm.getFieldClass('lastName')"
           />
           <span v-if="form.getFieldError('lastName')" class="error-text">
             {{ form.getFieldError('lastName') }}
@@ -121,11 +154,12 @@
         <div class="form-row">
           <label>Teléfono</label>
           <input
-            v-model="form.values.phone"
+            v-model="signupForm.values.phone"
             type="tel"
-            placeholder="Teléfono"
-            @blur="form.markTouched('phone')"
-            :class="form.getFieldClass('phone')"
+            placeholder="Teléfono (ej. +53 59368215)"
+            @blur="signupForm.markTouched('phone')"
+            @input="onPhoneInput"
+            :class="signupForm.getFieldClass('phone')"
           />
           <span v-if="form.getFieldError('phone')" class="error-text">
             {{ form.getFieldError('phone') }}
@@ -135,18 +169,20 @@
         <div class="form-row">
           <label>DNI</label>
           <input
-            v-model="form.values.dni"
+            v-model="signupForm.values.dni"
             type="text"
             placeholder="DNI"
-            @blur="form.markTouched('dni')"
-            :class="form.getFieldClass('dni')"
+            maxlength="11"
+            @blur="signupForm.markTouched('dni')"
+            @input="onDniInput"
+            :class="signupForm.getFieldClass('dni')"
           />
           <span v-if="form.getFieldError('dni')" class="error-text">
             {{ form.getFieldError('dni') }}
           </span>
         </div>
 
-        <button type="submit" :disabled="isLoading || form.isSubmitting">
+        <button type="submit">
           {{ isLoading ? $t('common.loading') : $t('account.signup') }}
         </button>
 
@@ -162,14 +198,21 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuth, useForm, useNotification } from '../composables'
 import { useAdminStore } from '../stores'
+import UserReservations from './UserReservations.vue'
 
 const router = useRouter()
 const { t } = useI18n()
-const { user, isAuthenticated, isAdmin, isLoading, login, logout, signup } = useAuth()
+const { user, isAuthenticated, isAdmin, isLoading, login, logout, signup, updateProfile, changePassword } = useAuth()
 const notification = useNotification()
 const adminStore = useAdminStore()
 
 const activeTab = ref('login')
+const phone = ref(user.value?.phone || '')
+// small phone form validator
+const phoneForm = useForm({ phone: phone.value })
+const editingPhone = ref(false)
+const password = ref('')
+const confirmPassword = ref('')
 
 // Formulario de login
 const loginForm = useForm(
@@ -177,8 +220,14 @@ const loginForm = useForm(
   async (values) => {
     const result = await login(values.email, values.password)
     if (result.success) {
-      form.resetForm()
-      router.push('/account')
+      loginForm.resetForm()
+      // Si existe un borrador de reserva, redirigir a /reservar para restaurarlo
+      const draft = sessionStorage.getItem('reservationDraft')
+      if (draft) {
+        router.push('/reservar')
+      } else {
+        router.push('/account')
+      }
     }
   }
 )
@@ -190,7 +239,7 @@ const signupForm = useForm(
     lastName: '',
     email: '',
     password: '',
-    phone: '',
+    phone: '+53 ',
     dni: ''
   },
   async (values) => {
@@ -205,18 +254,73 @@ const signupForm = useForm(
 // Seleccionar form según tab activo
 const form = computed(() => activeTab.value === 'login' ? loginForm : signupForm)
 
+// Sanitizadores y manejadores de input específicos para signup
+function sanitizeNameInput(value) {
+  // Eliminar números, permitir letras Unicode y espacios
+  const cleaned = String(value).replace(/[0-9]/g, '')
+  return cleaned
+}
+
+function onFirstNameInput(e) {
+  const v = sanitizeNameInput(e.target.value)
+  signupForm.setFieldValue('firstName', v)
+}
+
+function onLastNameInput(e) {
+  const v = sanitizeNameInput(e.target.value)
+  signupForm.setFieldValue('lastName', v)
+}
+
+function onPhoneInput(e) {
+  // Mantener prefijo +53 y permitir hasta 8 dígitos después
+  let v = String(e.target.value)
+  // If user removes prefix, restore it
+  if (!v.startsWith('+53')) {
+    // allow user to type numbers but always keep prefix
+    v = '+53 ' + v.replace(/[^0-9]/g, '')
+  }
+  // Remove any non-digits after prefix
+  const parts = v.split(/\s+/)
+  const rest = (parts[1] || '').replace(/[^0-9]/g, '').slice(0, 8)
+  const final = '+53 ' + rest
+  signupForm.setFieldValue('phone', final)
+}
+
+function onDniInput(e) {
+  let v = String(e.target.value).replace(/[^0-9]/g, '').slice(0, 11)
+  signupForm.setFieldValue('dni', v)
+}
+
 async function handleLogin() {
   if (!loginForm.validateAll()) {
+    notification.error(t('account.errors.formInvalid') || 'Por favor completa correctamente el formulario')
     return
   }
-  await loginForm.handleSubmit()
+
+  try {
+    const result = await loginForm.handleSubmit()
+    if (result && !result.success) {
+      notification.error(result.error || 'Error al iniciar sesión')
+    }
+  } catch (e) {
+    notification.error('Error al iniciar sesión')
+  }
 }
 
 async function handleSignup() {
   if (!signupForm.validateAll()) {
+    notification.error(t('account.errors.formInvalid') || 'Por favor completa correctamente el formulario')
     return
   }
-  await signupForm.handleSubmit()
+
+  try {
+    const result = await signupForm.handleSubmit()
+    if (result && !result.success) {
+      notification.error(result.error || 'Error al registrarse')
+    }
+  } catch (e) {
+    notification.error('Error al registrarse')
+  }
 }
 
 async function handleLogout() {
@@ -226,17 +330,39 @@ async function handleLogout() {
   }
 }
 
-async function toggleAdmin() {
-  if (!user.value?.id) return
-
-  const newIsAdmin = !isAdmin.value
-  const result = await adminStore.updateUserRole(user.value.id, newIsAdmin)
-
-  if (result.success) {
-    // Actualizar user local
-    user.value.isAdmin = newIsAdmin
-  }
+function viewReservations() {
+  router.push('/account/reservas')
 }
+
+function savePhone() {
+  // validate phone same as signup
+  phoneForm.setFieldValue('phone', phone.value)
+  if (!phoneForm.validateField('phone', phone.value)) {
+    notification.error(phoneForm.getFieldError('phone') || t('reserva.errors.phone'))
+    return
+  }
+
+  updateProfile({ phone: phone.value })
+  notification.success(t('account.savePhone'))
+  editingPhone.value = false
+}
+
+function cancelEdit() {
+  phone.value = user.value?.phone || ''
+  editingPhone.value = false
+}
+
+function updatePassword() {
+  if (password.value !== confirmPassword.value) {
+    notification.error(t('account.errors.passwordMismatch'))
+    return
+  }
+  changePassword(password.value)
+  notification.success(t('account.success.passwordChanged'))
+  password.value = ''
+  confirmPassword.value = ''
+}
+// toggleAdmin removed: admin role must be managed from Admin panel
 </script>
 
 <style scoped>
@@ -311,6 +437,36 @@ async function toggleAdmin() {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/* Edit Phone Section */
+.edit-phone {
+  margin: 1rem 0;
+}
+
+.edit-phone .phone-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pw-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.edit-phone .input, .change-password .input, .input {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: var(--color-caja);
+  color: var(--text-color);
+}
+
+.form-actions { display:flex; gap:0.5rem; }
+.btn-primary { background-color: var(--accent-color); color: var(--text-color-bold); border:none; padding:0.6rem 1rem; border-radius:8px; cursor:pointer }
+.btn-secondary { background:transparent; border:2px solid var(--accent-color); color:var(--accent-color); padding:0.5rem .9rem; border-radius:8px; cursor:pointer }
 
 /* Auth Tabs */
 .auth-tabs {

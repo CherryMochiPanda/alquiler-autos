@@ -7,6 +7,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import adminService from '../services/adminService'
 import { useNotificationStore } from './useNotificationStore'
+import { useAuthStore } from './useAuthStore'
 
 export const useAdminStore = defineStore('admin', () => {
   // State
@@ -95,6 +96,15 @@ export const useAdminStore = defineStore('admin', () => {
         if (user) {
           user.isAdmin = isAdmin
         }
+        // If the updated user is the current authenticated user, update local isAdmin flag
+        try {
+          const authStore = useAuthStore()
+          if (authStore.user && authStore.user.id === userId) {
+            authStore.isAdmin = isAdmin
+            localStorage.setItem('isAdmin', String(isAdmin))
+          }
+        } catch (e) {}
+
         notificationStore.showSuccess('Rol actualizado')
         return { success: true, user: result.user }
       } else {

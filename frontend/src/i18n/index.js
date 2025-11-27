@@ -138,6 +138,10 @@ const messages = {
         user: 'Usuario'
       },
       logout: 'Cerrar sesión',
+      myReservations: 'Mis Reservas',
+      editPhone: 'Editar teléfono',
+      savePhone: 'Guardar teléfono',
+      cancelEdit: 'Cancelar',
       admin: {
         add: 'Hacer admin (demo)',
         remove: 'Quitar admin (demo)'
@@ -359,6 +363,10 @@ const messages = {
         user: 'User'
       },
       logout: 'Sign out',
+      myReservations: 'My Reservations',
+      editPhone: 'Edit phone',
+      savePhone: 'Save phone',
+      cancelEdit: 'Cancel',
       admin: {
         add: 'Make admin (demo)',
         remove: 'Remove admin (demo)'

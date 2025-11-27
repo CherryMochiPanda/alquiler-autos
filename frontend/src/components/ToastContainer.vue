@@ -1,8 +1,8 @@
 <template>
   <div class="toast-root" aria-live="polite">
     <div v-for="t in list" :key="t.id" class="toast" :class="t.type">
-      {{ t.message }}
-      <button class="close-btn" @click="remove(t.id)">×</button>
+      <div class="toast-message">{{ t.message }}</div>
+      <button type="button" class="close-btn" @click.stop="remove(t.id)">×</button>
     </div>
   </div>
 </template>
@@ -71,23 +71,26 @@ const remove = id => notification.removeToast(id)
    border-color: rgba(244, 67, 54, 0.5);
  }
  
- .toast-close {
+ .close-btn {
    background: none;
    border: none;
    color: inherit;
-   font-size: 1.5rem;
+   font-size: 1.2rem;
    cursor: pointer;
    line-height: 1;
    transition: opacity 0.2s ease;
    flex-shrink: 0;
+   padding: 0.25rem 0.45rem;
+   border-radius: 6px;
  }
  
- .toast-close:hover {
-   opacity: 0.7;
+ .close-btn:hover {
+   opacity: 0.8;
+   background: rgba(255,255,255,0.08);
  }
  
- .toast-close:active {
-   opacity: 0.5;
+ .close-btn:active {
+   opacity: 0.6;
  }
  
  /* Animations */

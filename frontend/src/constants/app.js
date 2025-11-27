@@ -76,13 +76,14 @@ export const API_ENDPOINTS = {
 export const VALIDATION_RULES = {
   firstName: {
     required: true,
-    pattern: /^[a-zA-Z\s]{2,50}$/,
-    message: 'Nombre debe tener entre 2 y 50 caracteres'
+    // Permitir letras Unicode (tildes, ñ, etc.) y espacios
+    pattern: /^[\p{L}\s]{2,50}$/u,
+    message: 'Nombre debe tener entre 2 y 50 caracteres (solo letras)'
   },
   lastName: {
     required: true,
-    pattern: /^[a-zA-Z\s]{2,50}$/,
-    message: 'Apellido debe tener entre 2 y 50 caracteres'
+    pattern: /^[\p{L}\s]{2,50}$/u,
+    message: 'Apellido debe tener entre 2 y 50 caracteres (solo letras)'
   },
   email: {
     required: true,
@@ -96,13 +97,14 @@ export const VALIDATION_RULES = {
     message: 'Contraseña debe tener al menos 8 caracteres, una mayúscula y un número'
   },
   phone: {
-    required: true,
-    pattern: /^\+?[0-9]{7,15}$/,
-    message: 'Teléfono debe tener entre 7 y 15 dígitos'
+    // Teléfono opcional; formato esperado: +53 8digitos (o menos), ejemplo: +53 59368215
+    required: false,
+    pattern: /^\+53\s?[0-9]{1,8}$/,
+    message: 'Teléfono debe comenzar con +53 seguido de hasta 8 dígitos'
   },
   dni: {
     required: true,
-    pattern: /^[0-9]{7,9}$/,
-    message: 'DNI debe tener entre 7 y 9 dígitos'
+    pattern: /^[0-9]{11}$/,
+    message: 'DNI debe tener 11 dígitos.'
   }
 }

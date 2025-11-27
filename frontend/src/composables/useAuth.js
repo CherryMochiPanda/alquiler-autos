@@ -20,6 +20,7 @@ export function useAuth() {
   const signup = (userData) => authStore.signup(userData)
   const logout = () => authStore.logout()
   const updateProfile = (updates) => authStore.updateProfile(updates)
+  const changePassword = (pw) => authStore.changePassword ? authStore.changePassword(pw) : Promise.resolve({ success: false, error: 'Not supported' })
 
   return {
     user,
@@ -30,5 +31,6 @@ export function useAuth() {
     signup,
     logout,
     updateProfile
+    , changePassword
   }
 }

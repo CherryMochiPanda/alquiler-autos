@@ -3,6 +3,7 @@ import Home from './views/Home.vue'
 import Catalogo from './views/Catalogo.vue'
 import Reserva from './views/Reserva.vue'
 import Account from './views/Account.vue'
+import UserReservations from './views/UserReservations.vue'
 import Admin from './views/Admin.vue'
 import DetalleAuto from './views/DetalleAuto.vue'
 
@@ -25,6 +26,7 @@ const routes = [
   { path: '/catalogo', component: Catalogo },
   { path: '/reservar', component: Reserva },
   { path: '/account', component: Account },
+  { path: '/account/reservas', component: UserReservations },
   { path: '/detalle-auto', name: 'DetalleAuto', component: DetalleAuto },
   {
     path: '/admin',

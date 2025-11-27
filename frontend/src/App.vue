@@ -33,6 +33,7 @@ onMounted(() => {
   --text-color: #000000;
   --text-color-bold: #ffffff;
   --accent-color: #0077cc;
+  --nav-bg: rgba(255, 255, 255, 0.9);
   --color-wrapper:linear-gradient(to bottom right, #fcfeff, #d2f1ff, #e9d7ff);
   --color-Tgrand: #6a6a6a;
   --color-caja: #fff2fdc6;
@@ -44,8 +45,13 @@ onMounted(() => {
   --cicle3: #8400ff;
 }
 
+html {
+  min-height: 100vh;
+  height: 100%;
+}
+
 .dark {
-  --divider-color:  rgba(255, 255, 255, 0.1); 
+  --divider-color:  rgba(255, 253, 253, 0.1); 
   --bg-color: #121212;
   --text-color: #f0f0f0;
   --text-color-bold: #000000;
@@ -56,6 +62,7 @@ onMounted(() => {
   --color-sombra:rgba(0, 255, 255, 0.1);
   --box-bg: rgba(255, 255, 255, 0.05);
   --neon-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+  --nav-bg: rgba(18, 18, 18, 0.85);
   --cicle1: #00f7ff33;
   --cicle2: #6f00ff33;
   --cicle3: #ff00ff33;
@@ -65,22 +72,21 @@ onMounted(() => {
   margin: 0;
   padding: 0;
   width: 100%;
-  /*min-height: 100vh;*/
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
 body {
-  transition: background-color 0.5s ease, color 0.5s ease;
+  transition: background-color 0.5s ease, color 0.5s ease, background 0.5s ease;
   margin: 0;
   padding: 0;
   width: 100%;
   overflow-x: hidden;
-  background-color: var(--bg-color);
-  /*background: var(--color-wrapper);*/
+  background: var(--color-wrapper);
   color: var(--text-color);
   font-family: 'Segoe UI', sans-serif;
-  min-height: 100%;
+  min-height: 100vh;
 }
 
 </style>

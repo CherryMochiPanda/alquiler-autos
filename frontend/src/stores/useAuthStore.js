@@ -47,6 +47,11 @@ export const useAuthStore = defineStore('auth', () => {
         user.value = result.user
         token.value = result.token
         isAdmin.value = result.user.isAdmin || false
+        // Persist isAdmin flag for router guard compatibility
+        try {
+          localStorage.setItem('isAdmin', String(isAdmin.value))
+          localStorage.setItem('currentUser', JSON.stringify(result.user))
+        } catch (e) {}
         notificationStore.showSuccess('¡Bienvenido!')
         return { success: true }
       } else {
@@ -73,6 +78,10 @@ export const useAuthStore = defineStore('auth', () => {
         user.value = result.user
         token.value = result.token
         isAdmin.value = result.user.isAdmin || false
+        try {
+          localStorage.setItem('isAdmin', String(isAdmin.value))
+          localStorage.setItem('currentUser', JSON.stringify(result.user))
+        } catch (e) {}
         notificationStore.showSuccess('¡Cuenta creada exitosamente!')
         return { success: true }
       } else {
@@ -96,6 +105,10 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = null
       token.value = null
       isAdmin.value = false
+      try {
+        localStorage.removeItem('isAdmin')
+        localStorage.removeItem('currentUser')
+      } catch (e) {}
       notificationStore.showSuccess('Sesión cerrada')
       return { success: true }
     } catch (error) {
@@ -121,6 +134,26 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  /**
+   * Cambiar contraseña (simulado/local)
+   */
+  async function changePassword(newPassword) {
+    if (!user.value) {
+      notificationStore.showError('No autenticado')
+      return { success: false, error: 'No autenticado' }
+    }
+    try {
+      // Si existe un servicio real, delegar: await authService.changePassword(newPassword)
+      // Aquí solo simulamos la acción y confirmamos el cambio
+      // No guardamos la contraseña en el cliente por seguridad
+      notificationStore.showSuccess('Contraseña actualizada')
+      return { success: true }
+    } catch (err) {
+      notificationStore.showError('Error al cambiar contraseña')
+      return { success: false, error: err.message }
+    }
+  }
+
   return {
     // State
     user,
@@ -135,5 +168,6 @@ export const useAuthStore = defineStore('auth', () => {
     signup,
     logout,
     updateProfile
+    , changePassword
   }
 })

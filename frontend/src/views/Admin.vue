@@ -66,19 +66,20 @@
               <td class="actions-cell">
                 <button
                   v-if="!user.isAdmin"
-                  @click="toggleUserRole(user.id, true)"
+                  @click="toggleUserRole(user.id, user.email, true)"
                   class="btn-xs btn-primary"
                 >
                   {{ $t('admin.users.actions.makeAdmin') }}
                 </button>
                 <button
-                  v-else
-                  @click="toggleUserRole(user.id, false)"
+                  v-else-if="!isCurrentUser(user.id)"
+                  @click="toggleUserRole(user.id, user.email, false)"
                   class="btn-xs btn-warning"
                 >
                   {{ $t('admin.users.actions.revokeAdmin') }}
                 </button>
                 <button
+                  v-if="!isCurrentUser(user.id)"
                   @click="confirmDelete(user.id, user.email)"
                   class="btn-xs btn-danger"
                 >
@@ -217,13 +218,31 @@ onMounted(async () => {
 })
 
 // Usuarios
-async function toggleUserRole(userId, newIsAdmin) {
+async function toggleUserRole(userId, userEmail, newIsAdmin) {
+  // Solo permite cambiar a admin si el email es admin@correo.com
+  if (newIsAdmin && userEmail !== 'admin@correo.com') {
+    notification.error('Solo se puede hacer admin al usuario con correo admin@correo.com')
+    return
+  }
+
   const result = await adminStore.updateUserRole(userId, newIsAdmin)
   if (result.success) {
     const user = users.value.find(u => u.id === userId)
     if (user) {
       user.isAdmin = newIsAdmin
     }
+  }
+}
+
+function isCurrentUser(userId) {
+  // Obtener el usuario actual desde el store o localStorage
+  const currentUserStr = localStorage.getItem('currentUser')
+  if (!currentUserStr) return false
+  try {
+    const currentUser = JSON.parse(currentUserStr)
+    return currentUser.id === userId
+  } catch {
+    return false
   }
 }
 
@@ -234,6 +253,12 @@ async function refreshData() {
 }
 
 function confirmDelete(userId, email) {
+  // Impedir que el admin actual se borre a sí mismo
+  if (isCurrentUser(userId)) {
+    notification.error('No puedes borrar tu propio usuario (administrador)')
+    return
+  }
+  
   deleteConfirmType.value = 'user'
   deleteConfirmId.value = userId
   deleteConfirmMessage.value = `¿Está seguro de que desea eliminar al usuario ${email}?`

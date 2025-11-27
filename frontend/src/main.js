@@ -26,4 +26,29 @@ import { useAuthStore } from './stores/useAuthStore'
 const authStore = useAuthStore(pinia)
 authStore.initializeAuth()
 
+// Seed demo admin user if missing (email: admin@correo.com / pass: admin123)
+try {
+  const key = 'demo_users'
+  const raw = localStorage.getItem(key)
+  const users = raw ? JSON.parse(raw) : []
+  const exists = users.some(u => u.email === 'admin@correo.com')
+  if (!exists) {
+    const adminUser = {
+      id: 'admin-' + Date.now(),
+      firstName: 'Admin',
+      lastName: 'Demo',
+      email: 'admin@correo.com',
+      password: 'admin123',
+      phone: '+53 00000000',
+      dni: '00000000000',
+      isAdmin: true,
+      createdAt: new Date().toISOString()
+    }
+    users.push(adminUser)
+    localStorage.setItem(key, JSON.stringify(users))
+  }
+} catch (e) {
+  // ignore
+}
+
 app.mount('#app')

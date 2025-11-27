@@ -56,6 +56,7 @@
 
 <script setup>
 import { reactive, toRefs, computed } from 'vue'
+import { useNotification } from '../composables'
 const props = defineProps({ model: { type: Object, default: null } })
 const emit = defineEmits(['save','cancel'])
 
@@ -80,9 +81,14 @@ const imagesText = computed({
 
 const title = computed(() => props.model ? 'Editar vehículo' : 'Agregar vehículo')
 
+const notification = useNotification()
+
 function onSave() {
   // minimal validation
-  if (!local.nombre) return alert('Nombre requerido')
+  if (!local.nombre) {
+    notification.error('Nombre requerido')
+    return
+  }
   const out = {
     id: local.id || `${local.nombre.toLowerCase().replace(/[^a-z0-9]+/g,'-')}-${Date.now()}`,
     nombre: local.nombre,

@@ -103,7 +103,8 @@ export function useForm(initialValues = {}, onSubmit = null) {
     isSubmitting.value = true
     try {
       if (onSubmit) {
-        await onSubmit(values)
+        const res = await onSubmit(values)
+        return res
       }
     } catch (error) {
       console.error('Form submission error:', error)
