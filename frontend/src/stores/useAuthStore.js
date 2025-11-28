@@ -7,6 +7,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import authService from '../services/authService'
 import { useNotificationStore } from './useNotificationStore'
+import { STORAGE_KEYS } from '../constants/app'
 
 export const useAuthStore = defineStore('auth', () => {
   // State
@@ -31,7 +32,7 @@ export const useAuthStore = defineStore('auth', () => {
     if (savedUser && savedToken) {
       user.value = savedUser
       token.value = savedToken
-      isAdmin.value = savedUser.isAdmin || false
+      isAdmin.value = savedUser.role === 'admin'
     }
   }
 
@@ -46,11 +47,11 @@ export const useAuthStore = defineStore('auth', () => {
       if (result.success) {
         user.value = result.user
         token.value = result.token
-        isAdmin.value = result.user.isAdmin || false
-        // Persist isAdmin flag for router guard compatibility
+        isAdmin.value = result.user.role === 'admin'
+        // Persist isAdmin flag and current user for router guard compatibility
         try {
           localStorage.setItem('isAdmin', String(isAdmin.value))
-          localStorage.setItem('currentUser', JSON.stringify(result.user))
+          localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(result.user))
         } catch (e) {}
         notificationStore.showSuccess('¡Bienvenido!')
         return { success: true }
@@ -77,10 +78,10 @@ export const useAuthStore = defineStore('auth', () => {
       if (result.success) {
         user.value = result.user
         token.value = result.token
-        isAdmin.value = result.user.isAdmin || false
+        isAdmin.value = result.user.role === 'admin'
         try {
           localStorage.setItem('isAdmin', String(isAdmin.value))
-          localStorage.setItem('currentUser', JSON.stringify(result.user))
+          localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(result.user))
         } catch (e) {}
         notificationStore.showSuccess('¡Cuenta creada exitosamente!')
         return { success: true }
@@ -107,7 +108,8 @@ export const useAuthStore = defineStore('auth', () => {
       isAdmin.value = false
       try {
         localStorage.removeItem('isAdmin')
-        localStorage.removeItem('currentUser')
+        localStorage.removeItem(STORAGE_KEYS.CURRENT_USER)
+        localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN)
       } catch (e) {}
       notificationStore.showSuccess('Sesión cerrada')
       return { success: true }

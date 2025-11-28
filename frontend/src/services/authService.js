@@ -38,25 +38,20 @@ const authService = {
    */
   async login(email, password) {
     try {
-      // TODO: Reemplazar con llamada real a apiClient cuando esté listo el backend
-      // const result = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, { email, password })
-      // return result
-
-      // Demo: búsqueda en localStorage
-      const demoUsers = getDemoUsers()
-      const user = demoUsers.find(u => u.email === email && u.password === password)
-
-      if (!user) {
-        return { success: false, error: 'Email o contraseña inválidos' }
+      const result = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, { email, password })
+      if (!result.success) {
+        return { success: false, error: result.error }
       }
 
-      // Simula token
-      const token = 'demo-token-' + Date.now()
-      localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token)
-      localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user))
+      const { user, token } = result.data
+      if (token) {
+        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token)
+      }
+      if (user) {
+        localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user))
+      }
 
-      const { password: _, ...userWithoutPassword } = user
-      return { success: true, user: userWithoutPassword, token }
+      return { success: true, user, token }
     } catch (error) {
       return { success: false, error: error.message }
     }
@@ -69,34 +64,20 @@ const authService = {
    */
   async signup(userData) {
     try {
-      // TODO: Reemplazar con llamada real a apiClient
-      // const result = await apiClient.post(API_ENDPOINTS.AUTH.SIGNUP, userData)
-      // return result
-
-      // Demo: validación y almacenamiento en localStorage
-      const demoUsers = getDemoUsers()
-
-      if (demoUsers.some(u => u.email === userData.email)) {
-        return { success: false, error: 'El email ya está registrado' }
+      const result = await apiClient.post(API_ENDPOINTS.AUTH.SIGNUP, userData)
+      if (!result.success) {
+        return { success: false, error: result.error }
       }
 
-      const newUser = {
-        id: 'user-' + Date.now(),
-        ...userData,
-        isAdmin: false,
-        createdAt: new Date().toISOString()
+      const { user, token } = result.data
+      if (token) {
+        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token)
+      }
+      if (user) {
+        localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user))
       }
 
-      demoUsers.push(newUser)
-      saveDemoUsers(demoUsers)
-
-      // Auto-login
-      const token = 'demo-token-' + Date.now()
-      localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token)
-      localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(newUser))
-
-      const { password: _, ...userWithoutPassword } = newUser
-      return { success: true, user: userWithoutPassword, token }
+      return { success: true, user, token }
     } catch (error) {
       return { success: false, error: error.message }
     }
@@ -108,8 +89,12 @@ const authService = {
    */
   async logout() {
     try {
-      // TODO: Llamar a API cuando exista
-      // await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT)
+      // Try calling backend logout if implemented (non-blocking)
+      try {
+        await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT)
+      } catch (e) {
+        // ignore
+      }
 
       localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN)
       localStorage.removeItem(STORAGE_KEYS.CURRENT_USER)
@@ -154,7 +139,7 @@ const authService = {
    */
   isAdmin() {
     const user = this.getCurrentUser()
-    return user?.isAdmin ?? false
+    return user?.role === 'admin'
   }
 }
 

@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
@@ -52,10 +56,7 @@ export class CategoryService {
     const category = await this.findOne(id);
 
     // Si se intenta cambiar el nombre, verificar que no exista otra con ese nombre
-    if (
-      updateCategoryDto.name &&
-      updateCategoryDto.name !== category.name
-    ) {
+    if (updateCategoryDto.name && updateCategoryDto.name !== category.name) {
       const existingCategory = await this.categoryRepository.findOne({
         where: { name: updateCategoryDto.name },
       });

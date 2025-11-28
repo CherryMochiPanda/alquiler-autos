@@ -10,6 +10,7 @@ import { ProvinceModule } from './province/province.module';
 import { LocationModule } from './location/location.module';
 import { ReviewModule } from './review/review.module';
 import { InventoryModule } from './inventory/inventory.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -25,12 +26,15 @@ import { InventoryModule } from './inventory/inventory.module';
       synchronize: true,
     }),
     UsersModule,
-    CarsModule,
+    UsersModule,
     RentalsModule,
     CategoryModule,
     ProvinceModule,
     LocationModule,
     ReviewModule,
+    // Auth module para endpoints /api/auth
+    InventoryModule,
+    AuthModule,
     InventoryModule,
   ],
   controllers: [AppController],

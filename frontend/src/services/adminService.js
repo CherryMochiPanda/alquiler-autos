@@ -43,6 +43,10 @@ const adminService = {
       // No mostrar contraseña
       const safeUsers = users.map(u => {
         const { password: _, ...user } = u
+        // Normalize demo user role to 'user'|'admin' if isAdmin flag exists
+        if (user.isAdmin !== undefined && !user.role) {
+          user.role = user.isAdmin ? 'admin' : 'user'
+        }
         return user
       })
 
@@ -126,6 +130,8 @@ const adminService = {
         return { success: false, error: 'Usuario no encontrado' }
       }
 
+      user.role = isAdmin ? 'admin' : 'user'
+      // Keep backward-compatible isAdmin flag for demo data
       user.isAdmin = isAdmin
       saveDemoUsers(users)
 
@@ -148,7 +154,7 @@ const adminService = {
 
       // Demo
       const users = getDemoUsers()
-      const admins = users.filter(u => u.isAdmin).length
+      const admins = users.filter(u => (u.role === 'admin') || u.isAdmin).length
 
       return {
         success: true,

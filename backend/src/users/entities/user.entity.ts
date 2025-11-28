@@ -17,10 +17,19 @@ export class User {
   fullName: string;
 
   @Column({ nullable: true })
+  firstName?: string;
+
+  @Column({ nullable: true })
+  lastName?: string;
+
+  @Column({ nullable: true })
   phoneNumber: string;
 
-  @Column({ default: 'client' })
-  role: string; // 'admin' | 'client'
+  @Column({ nullable: true, unique: false })
+  dni?: string;
+
+  @Column({ default: 'user' })
+  role: string; // 'admin' | 'user'
 
   // Relación 1:N con Rentas
   @OneToMany(() => Rental, (rental) => rental.user)

@@ -3,6 +3,7 @@ import {
   BadRequestException,
   NotFoundException,
 } from '@nestjs/common';
+import * as bcrypt from 'bcryptjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -19,17 +20,27 @@ export class UsersService {
   async create(createUserDto: CreateUserDto): Promise<User> {
     // Verificar si el email ya existe
     const existingUser = await this.userRepository.findOne({
-      where: { email: createUserDto.email as string },
+      where: { email: createUserDto.email },
     });
 
     if (existingUser) {
       throw new BadRequestException('El email ya está registrado');
     }
 
-    // Crear nuevo usuario
+    // Crear nuevo usuario: mapear campos del frontend a la entidad
+    const fullName =
+      `${createUserDto.firstName} ${createUserDto.lastName}`.trim();
+
     const user = this.userRepository.create({
-      ...createUserDto,
-      role: (createUserDto.role as string) || 'client',
+      email: createUserDto.email,
+      // Hash password before storing
+      password: await bcrypt.hash(createUserDto.password, 10),
+      firstName: createUserDto.firstName,
+      lastName: createUserDto.lastName,
+      fullName,
+      phoneNumber: createUserDto.phone,
+      dni: createUserDto.dni,
+      role: (createUserDto.role as string) || 'user',
     });
 
     return this.userRepository.save(user);
@@ -66,14 +77,39 @@ export class UsersService {
     // Si se intenta cambiar el email, verificar que no exista otro con ese email
     if (updateUserDto.email && updateUserDto.email !== user.email) {
       const existingUser = await this.userRepository.findOne({
-        where: { email: updateUserDto.email as string },
+        where: { email: updateUserDto.email },
       });
       if (existingUser) {
         throw new BadRequestException('El email ya está registrado');
       }
     }
 
-    Object.assign(user, updateUserDto);
+    // Si se actualizan nombres, reconstruir fullName
+    if (updateUserDto.firstName !== undefined) {
+      user.firstName = updateUserDto.firstName;
+    }
+    if (updateUserDto.lastName !== undefined) {
+      user.lastName = updateUserDto.lastName;
+    }
+    user.fullName = `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim();
+
+    if (updateUserDto.phone !== undefined) {
+      user.phoneNumber = updateUserDto.phone;
+    }
+    if (updateUserDto.dni !== undefined) {
+      user.dni = updateUserDto.dni;
+    }
+
+    // Hash password on update if provided
+    if (updateUserDto.password !== undefined) {
+      user.password = await bcrypt.hash(updateUserDto.password, 10);
+    }
+
+    // Actualizar role si se proporciona
+    if (updateUserDto.role !== undefined) {
+      user.role = updateUserDto.role as string;
+    }
+
     return this.userRepository.save(user);
   }
 

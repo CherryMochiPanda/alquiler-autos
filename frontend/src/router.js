@@ -10,8 +10,10 @@ import DetalleAuto from './views/DetalleAuto.vue'
 // Guarda para proteger ruta admin
 function adminGuard(to, from, next) {
   try {
-    const isAdmin = localStorage.getItem('isAdmin') === 'true'
-    if (isAdmin) {
+    const raw = localStorage.getItem('currentUser')
+    if (!raw) return next('/')
+    const user = JSON.parse(raw)
+    if (user?.role === 'admin') {
       next()
     } else {
       next('/')

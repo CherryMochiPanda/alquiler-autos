@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Review } from './entities/review.entity';
@@ -82,10 +86,7 @@ export class ReviewService {
     });
   }
 
-  async update(
-    id: string,
-    updateReviewDto: UpdateReviewDto,
-  ): Promise<Review> {
+  async update(id: string, updateReviewDto: UpdateReviewDto): Promise<Review> {
     const review = await this.findOne(id);
 
     // Validar rating si se intenta cambiar

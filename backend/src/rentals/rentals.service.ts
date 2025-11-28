@@ -65,7 +65,8 @@ export class RentalsService {
     // Validar que la fecha de inicio sea al menos 24h en el futuro
     const now = new Date();
     const startDate = new Date(createRentalDto.startDate);
-    const hoursUntilStart = (startDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+    const hoursUntilStart =
+      (startDate.getTime() - now.getTime()) / (1000 * 60 * 60);
 
     if (hoursUntilStart < 24) {
       throw new BadRequestException(
@@ -79,9 +80,7 @@ export class RentalsService {
       (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60);
 
     if (hoursDifference < 72) {
-      throw new BadRequestException(
-        'La renta debe ser de al menos 72 horas',
-      );
+      throw new BadRequestException('La renta debe ser de al menos 72 horas');
     }
 
     // Calcular precio total si no se proporcionó
@@ -162,9 +161,7 @@ export class RentalsService {
         (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60);
 
       if (hoursDifference < 72) {
-        throw new BadRequestException(
-          'La renta debe ser de al menos 72 horas',
-        );
+        throw new BadRequestException('La renta debe ser de al menos 72 horas');
       }
     }
 

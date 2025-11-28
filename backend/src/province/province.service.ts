@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Province } from './entities/province.entity';
@@ -52,10 +56,7 @@ export class ProvinceService {
     const province = await this.findOne(id);
 
     // Si se intenta cambiar el nombre, verificar que no exista otra con ese nombre
-    if (
-      updateProvinceDto.name &&
-      updateProvinceDto.name !== province.name
-    ) {
+    if (updateProvinceDto.name && updateProvinceDto.name !== province.name) {
       const existingProvince = await this.provinceRepository.findOne({
         where: { name: updateProvinceDto.name },
       });

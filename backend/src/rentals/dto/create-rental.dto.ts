@@ -1,11 +1,17 @@
-import { IsDateString, IsUUID, IsOptional, IsBoolean, IsNumber } from 'class-validator';
+import {
+  IsDateString,
+  IsUUID,
+  IsOptional,
+  IsBoolean,
+  IsNumber,
+} from 'class-validator';
 
 export class CreateRentalDto {
   @IsDateString()
-  startDate: Date;
+  startDate: string;
 
   @IsDateString()
-  endDate: Date;
+  endDate: string;
 
   @IsUUID()
   userId: string;

@@ -19,7 +19,7 @@ export const useAdminStore = defineStore('admin', () => {
   const notificationStore = useNotificationStore()
 
   // Computed
-  const adminCount = computed(() => users.value.filter(u => u.isAdmin).length)
+  const adminCount = computed(() => users.value.filter(u => u.role === 'admin').length)
   const userCount = computed(() => users.value.length)
 
   /**
@@ -94,14 +94,17 @@ export const useAdminStore = defineStore('admin', () => {
       if (result.success) {
         const user = users.value.find(u => u.id === userId)
         if (user) {
+          user.role = isAdmin ? 'admin' : 'user'
           user.isAdmin = isAdmin
         }
-        // If the updated user is the current authenticated user, update local isAdmin flag
+        // If the updated user is the current authenticated user, update local isAdmin flag and role
         try {
           const authStore = useAuthStore()
           if (authStore.user && authStore.user.id === userId) {
             authStore.isAdmin = isAdmin
+            authStore.user.role = isAdmin ? 'admin' : 'user'
             localStorage.setItem('isAdmin', String(isAdmin))
+            localStorage.setItem('currentUser', JSON.stringify(authStore.user))
           }
         } catch (e) {}
 
