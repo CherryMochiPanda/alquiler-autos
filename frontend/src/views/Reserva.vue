@@ -688,7 +688,7 @@ onMounted(() => {
 
 .btn-submit {
   background-color: var(--accent-color);
-  color: var(--text-color);
+  color: var(--text-on-accent);
 }
 
 .btn-submit:hover:not(:disabled) {
