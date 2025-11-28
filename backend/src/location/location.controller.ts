@@ -17,18 +17,23 @@ export class LocationController {
     return this.locationService.findAll();
   }
 
+  @Get('province/:provinceId')
+  findByProvince(@Param('provinceId') provinceId: string) {
+    return this.locationService.findByProvince(parseInt(provinceId));
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.locationService.findOne(+id);
+    return this.locationService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateLocationDto: UpdateLocationDto) {
-    return this.locationService.update(+id, updateLocationDto);
+    return this.locationService.update(id, updateLocationDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.locationService.remove(+id);
+    return this.locationService.remove(id);
   }
 }

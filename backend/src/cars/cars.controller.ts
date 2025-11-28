@@ -25,18 +25,31 @@ export class CarsController {
     return this.carsService.findAll();
   }
 
+  @Get('available')
+  findAvailable() {
+    return this.carsService.findAvailable();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.carsService.findOne(+id);
+    return this.carsService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCarDto: UpdateCarDto) {
-    return this.carsService.update(+id, updateCarDto);
+    return this.carsService.update(id, updateCarDto);
+  }
+
+  @Patch(':id/availability')
+  updateAvailability(
+    @Param('id') id: string,
+    @Body() body: { isAvailable: boolean },
+  ) {
+    return this.carsService.updateAvailability(id, body.isAvailable);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.carsService.remove(+id);
+    return this.carsService.remove(id);
   }
 }

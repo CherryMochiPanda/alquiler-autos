@@ -9,6 +9,7 @@ import { CategoryModule } from './category/category.module';
 import { ProvinceModule } from './province/province.module';
 import { LocationModule } from './location/location.module';
 import { ReviewModule } from './review/review.module';
+import { InventoryModule } from './inventory/inventory.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ReviewModule } from './review/review.module';
     ProvinceModule,
     LocationModule,
     ReviewModule,
+    InventoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

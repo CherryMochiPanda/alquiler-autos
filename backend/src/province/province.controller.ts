@@ -19,16 +19,16 @@ export class ProvinceController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.provinceService.findOne(+id);
+    return this.provinceService.findOne(parseInt(id));
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProvinceDto: UpdateProvinceDto) {
-    return this.provinceService.update(+id, updateProvinceDto);
+    return this.provinceService.update(parseInt(id), updateProvinceDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.provinceService.remove(+id);
+    return this.provinceService.remove(parseInt(id));
   }
 }

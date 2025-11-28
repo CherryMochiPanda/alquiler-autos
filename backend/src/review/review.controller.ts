@@ -17,18 +17,28 @@ export class ReviewController {
     return this.reviewService.findAll();
   }
 
+  @Get('car/:carId')
+  findByCar(@Param('carId') carId: string) {
+    return this.reviewService.findByCar(carId);
+  }
+
+  @Get('user/:userId')
+  findByUser(@Param('userId') userId: string) {
+    return this.reviewService.findByUser(userId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.reviewService.findOne(+id);
+    return this.reviewService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
-    return this.reviewService.update(+id, updateReviewDto);
+    return this.reviewService.update(id, updateReviewDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.reviewService.remove(+id);
+    return this.reviewService.remove(id);
   }
 }
