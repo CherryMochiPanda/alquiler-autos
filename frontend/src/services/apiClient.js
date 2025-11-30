@@ -86,6 +86,22 @@ class ApiClient {
   }
 
   /**
+   * PATCH request
+   */
+  async patch(endpoint, data = {}) {
+    try {
+      const response = await fetch(`${this.baseURL}${endpoint}`, {
+        method: 'PATCH',
+        headers: this.getHeaders(),
+        body: JSON.stringify(data)
+      })
+      return this.handleResponse(response)
+    } catch (error) {
+      return this.handleError(error)
+    }
+  }
+
+  /**
    * DELETE request
    */
   async delete(endpoint) {

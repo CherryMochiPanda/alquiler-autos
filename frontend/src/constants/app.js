@@ -61,6 +61,7 @@ export const API_ENDPOINTS = {
     USERS: '/api/admin/users',
     USER_DETAIL: '/api/admin/users/:id',
     UPDATE_USER: '/api/admin/users/:id',
+    UPDATE_USER_ROLE: '/api/admin/users/:id/role',
     DELETE_USER: '/api/admin/users/:id',
     STATS: '/api/admin/stats'
   },

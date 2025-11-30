@@ -11,6 +11,9 @@ import { LocationModule } from './location/location.module';
 import { ReviewModule } from './review/review.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { AuthModule } from './auth/auth.module';
+import { AdminUserSeeder } from './database/seeders/admin-user.seeder';
+import { User } from './users/entities/user.entity';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -22,22 +25,21 @@ import { AuthModule } from './auth/auth.module';
       password: '12345',
       database: 'alquiler_autos_db',
 
-      entities: [__dirname + '/**/*.entity{.ts,.js}'], // <-- RUTA EXPLÍCITA
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
-    UsersModule,
+    TypeOrmModule.forFeature([User]),
     UsersModule,
     RentalsModule,
     CategoryModule,
     ProvinceModule,
     LocationModule,
     ReviewModule,
-    // Auth module para endpoints /api/auth
     InventoryModule,
     AuthModule,
-    InventoryModule,
+    AdminModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AdminUserSeeder],
 })
 export class AppModule {}

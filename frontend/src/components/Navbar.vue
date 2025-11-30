@@ -17,7 +17,7 @@
         <li><router-link to="/" @click="menuAbierto = false">{{ $t('nav.home') }}</router-link></li>
         <li><router-link to="/catalogo" @click="menuAbierto = false">{{ $t('nav.catalog') }}</router-link></li>
         <li><router-link to="/account" @click="menuAbierto = false">{{ $t('nav.account') }}</router-link></li>
-        <li v-if="isAdmin"><router-link to="/admin" @click="menuAbierto = false">{{ $t('nav.admin') }}</router-link></li>
+        <li v-show="isAdmin"><router-link to="/admin" @click="menuAbierto = false">{{ $t('nav.admin') }}</router-link></li>
       </ul>
 
       <select v-model="locale" class="lang-select" :aria-label="$t('navbar.langSelectLabel')">

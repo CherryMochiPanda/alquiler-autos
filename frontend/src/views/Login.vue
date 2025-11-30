@@ -16,5 +16,3 @@ onMounted(() => {
 <style scoped>
 /* Redirect-only view: styles intentionally minimal */
 </style>
-
-</style>

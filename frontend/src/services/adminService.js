@@ -34,23 +34,11 @@ const adminService = {
    */
   async getUsers() {
     try {
-      // TODO: Reemplazar con apiClient.get
-      // const result = await apiClient.get(API_ENDPOINTS.ADMIN.USERS)
-      // return result
-
-      // Demo
-      const users = getDemoUsers()
-      // No mostrar contraseña
-      const safeUsers = users.map(u => {
-        const { password: _, ...user } = u
-        // Normalize demo user role to 'user'|'admin' if isAdmin flag exists
-        if (user.isAdmin !== undefined && !user.role) {
-          user.role = user.isAdmin ? 'admin' : 'user'
-        }
-        return user
-      })
-
-      return { success: true, users: safeUsers }
+      const result = await apiClient.get(API_ENDPOINTS.ADMIN.USERS)
+      if (!result.success) {
+        return { success: false, error: result.error }
+      }
+      return result.data
     } catch (error) {
       return { success: false, error: error.message }
     }
@@ -63,20 +51,11 @@ const adminService = {
    */
   async getUser(userId) {
     try {
-      // TODO: Reemplazar con apiClient.get
-      // const result = await apiClient.get(`${API_ENDPOINTS.ADMIN.USER_DETAIL}/${userId}`)
-      // return result
-
-      // Demo
-      const users = getDemoUsers()
-      const user = users.find(u => u.id === userId)
-
-      if (!user) {
-        return { success: false, error: 'Usuario no encontrado' }
+      const result = await apiClient.get(`${API_ENDPOINTS.ADMIN.USER_DETAIL.replace(':id', userId)}`)
+      if (!result.success) {
+        return { success: false, error: result.error }
       }
-
-      const { password: _, ...safeUser } = user
-      return { success: true, user: safeUser }
+      return result.data
     } catch (error) {
       return { success: false, error: error.message }
     }
@@ -89,22 +68,11 @@ const adminService = {
    */
   async deleteUser(userId) {
     try {
-      // TODO: Reemplazar con apiClient.delete
-      // const result = await apiClient.delete(`${API_ENDPOINTS.ADMIN.DELETE_USER}/${userId}`)
-      // return result
-
-      // Demo
-      const users = getDemoUsers()
-      const index = users.findIndex(u => u.id === userId)
-
-      if (index === -1) {
-        return { success: false, error: 'Usuario no encontrado' }
+      const result = await apiClient.delete(`${API_ENDPOINTS.ADMIN.DELETE_USER.replace(':id', userId)}`)
+      if (!result.success) {
+        return { success: false, error: result.error }
       }
-
-      users.splice(index, 1)
-      saveDemoUsers(users)
-
-      return { success: true }
+      return result.data
     } catch (error) {
       return { success: false, error: error.message }
     }
@@ -113,30 +81,20 @@ const adminService = {
   /**
    * Actualiza rol de usuario
    * @param {string} userId
-   * @param {boolean} isAdmin
+   * @param {boolean} makeAdmin
    * @returns {Promise} { success, user, error? }
    */
-  async updateUserRole(userId, isAdmin) {
+  async updateUserRole(userId, makeAdmin) {
     try {
-      // TODO: Reemplazar con apiClient.put
-      // const result = await apiClient.put(`${API_ENDPOINTS.ADMIN.UPDATE_USER}/${userId}`, { isAdmin })
-      // return result
-
-      // Demo
-      const users = getDemoUsers()
-      const user = users.find(u => u.id === userId)
-
-      if (!user) {
-        return { success: false, error: 'Usuario no encontrado' }
+      const role = makeAdmin ? 'admin' : 'user'
+      const result = await apiClient.patch(
+        API_ENDPOINTS.ADMIN.UPDATE_USER_ROLE.replace(':id', userId),
+        { role }
+      )
+      if (!result.success) {
+        return { success: false, error: result.error }
       }
-
-      user.role = isAdmin ? 'admin' : 'user'
-      // Keep backward-compatible isAdmin flag for demo data
-      user.isAdmin = isAdmin
-      saveDemoUsers(users)
-
-      const { password: _, ...safeUser } = user
-      return { success: true, user: safeUser }
+      return result.data
     } catch (error) {
       return { success: false, error: error.message }
     }
@@ -148,23 +106,11 @@ const adminService = {
    */
   async getStats() {
     try {
-      // TODO: Reemplazar con apiClient.get
-      // const result = await apiClient.get(API_ENDPOINTS.ADMIN.STATS)
-      // return result
-
-      // Demo
-      const users = getDemoUsers()
-      const admins = users.filter(u => (u.role === 'admin') || u.isAdmin).length
-
-      return {
-        success: true,
-        stats: {
-          totalUsers: users.length,
-          totalAdmins: admins,
-          totalCars: 0, // Obtener de carsService si es necesario
-          totalReservations: 0
-        }
+      const result = await apiClient.get(API_ENDPOINTS.ADMIN.STATS)
+      if (!result.success) {
+        return { success: false, error: result.error }
       }
+      return result.data
     } catch (error) {
       return { success: false, error: error.message }
     }

@@ -60,19 +60,19 @@
               <td class="name-cell">{{ user.firstName }} {{ user.lastName }}</td>
               <td class="email-cell">{{ user.email }}</td>
               <td class="role-cell">
-                <span v-if="user.isAdmin" class="role-badge admin">Admin</span>
+                <span v-if="user.role === 'admin'" class="role-badge admin">Admin</span>
                 <span v-else class="role-badge user">{{ $t('account.role.user') }}</span>
               </td>
               <td class="actions-cell">
                 <button
-                  v-if="!user.isAdmin"
+                  v-if="user.role !== 'admin' && !isCurrentUser(user.id)"
                   @click="toggleUserRole(user.id, user.email, true)"
                   class="btn-xs btn-primary"
                 >
                   {{ $t('admin.users.actions.makeAdmin') }}
                 </button>
                 <button
-                  v-else-if="!isCurrentUser(user.id)"
+                  v-else-if="user.role === 'admin' && !isCurrentUser(user.id)"
                   @click="toggleUserRole(user.id, user.email, false)"
                   class="btn-xs btn-warning"
                 >
@@ -218,18 +218,18 @@ onMounted(async () => {
 })
 
 // Usuarios
-async function toggleUserRole(userId, userEmail, newIsAdmin) {
-  // Solo permite cambiar a admin si el email es admin@correo.com
-  if (newIsAdmin && userEmail !== 'admin@correo.com') {
-    notification.error('Solo se puede hacer admin al usuario con correo admin@correo.com')
+async function toggleUserRole(userId, userEmail, makeAdmin) {
+  // Proteger contra auto-cambio de rol
+  if (isCurrentUser(userId)) {
+    notification.error('No puedes cambiar tu propio rol (administrador)')
     return
   }
 
-  const result = await adminStore.updateUserRole(userId, newIsAdmin)
+  const result = await adminStore.updateUserRole(userId, makeAdmin)
   if (result.success) {
     const user = users.value.find(u => u.id === userId)
     if (user) {
-      user.isAdmin = newIsAdmin
+      user.role = makeAdmin ? 'admin' : 'user'
     }
   }
 }

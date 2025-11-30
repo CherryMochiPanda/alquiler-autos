@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { AdminUserSeeder } from './database/seeders/admin-user.seeder';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,6 +23,10 @@ async function bootstrap() {
     origin: ['http://localhost:5173'],
     credentials: true,
   });
+
+  // Ejecutar seeder para crear usuario admin de prueba
+  const seeder = app.get(AdminUserSeeder);
+  await seeder.seed();
 
   const port = process.env.PORT ?? 3000;
   await app.listen(port);

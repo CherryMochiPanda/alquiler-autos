@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import {
   IsEmail,
   IsString,
@@ -5,10 +6,7 @@ import {
   IsIn,
   Matches,
   MinLength,
-  MaxLength,
 } from 'class-validator';
-
-// Mapea las validaciones definidas en frontend (VALIDATION_RULES)
 export class CreateUserDto {
   @IsEmail()
   email: string;
@@ -31,7 +29,6 @@ export class CreateUserDto {
   @Matches(/^\+53\s?[0-9]{1,8}$/)
   phone?: string;
 
-  // DNI opcional: exactamente 11 dígitos según frontend
   // Frontend marca DNI como requerido
   @Matches(/^[0-9]{11}$/)
   dni: string;
