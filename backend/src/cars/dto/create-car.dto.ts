@@ -1,10 +1,4 @@
-import {
-  IsString,
-  IsNumber,
-  IsOptional,
-  IsBoolean,
-  IsUUID,
-} from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean } from 'class-validator';
 
 export class CreateCarDto {
   @IsString()
@@ -16,7 +10,7 @@ export class CreateCarDto {
   @IsNumber()
   year: number;
 
-  @IsNumber()
+  @IsString()
   pricePerDay: number;
 
   @IsString()

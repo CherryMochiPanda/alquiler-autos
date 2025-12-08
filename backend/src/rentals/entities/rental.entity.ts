@@ -14,7 +14,7 @@ export class Rental {
   @Column({ type: 'timestamp' })
   endDate: Date; // Fecha y hora de entrega (Mínimo 72h después de recogida)
 
-  @Column('decimal')
+  @Column('decimal', { precision: 10, scale: 2 }) // Total de 10 dígitos, 2 decimales
   totalPrice: number;
 
   @Column({ default: 'PENDING' })

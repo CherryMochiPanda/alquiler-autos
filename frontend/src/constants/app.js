@@ -51,10 +51,10 @@ export const API_ENDPOINTS = {
   },
   CARS: {
     LIST: '/api/cars',
-    DETAIL: '/api/cars/:id',
+    DETAIL: '/api/cars',
     CREATE: '/api/cars',
-    UPDATE: '/api/cars/:id',
-    DELETE: '/api/cars/:id',
+    UPDATE: '/api/cars',
+    DELETE: '/api/cars',
     FEATURED: '/api/cars/featured'
   },
   ADMIN: {

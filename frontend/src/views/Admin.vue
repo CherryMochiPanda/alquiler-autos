@@ -121,14 +121,15 @@
         <div v-else class="cars-grid">
           <div v-for="car in cars" :key="car.id" class="car-card">
             <div class="car-header">
-              <h4>{{ car.nombre }}</h4>
+              <h4>{{ car.brand }}</h4>
               <span class="car-id">#{{ car.id.substring(0, 8) }}</span>
             </div>
-            <p class="car-description">{{ car.descripcion }}</p>
+            <p class="car-description">{{ car.model }}</p>
             <div class="car-specs">
-              <span class="spec">{{ car.motor }}</span>
-              <span class="spec">{{ car.transmision }}</span>
-              <span class="spec">{{ car.capacidad }} seats</span>
+              <span class="spec">{{ car.year }}</span>
+              <span class="spec">{{ car.pricePerDay }}$ por dia</span>
+              <span class="spec">Placa {{ car.plate }}</span>
+              <span class="spec">{{ car.category.name }}</span>
             </div>
             <div class="car-actions">
               <button @click="editCar(car)" class="btn-xs btn-primary">

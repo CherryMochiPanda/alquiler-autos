@@ -1,17 +1,20 @@
 import {
-  IsDateString,
+  IsDate,
   IsUUID,
   IsOptional,
   IsBoolean,
   IsNumber,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateRentalDto {
-  @IsDateString()
-  startDate: string;
+  @Type(() => Date)
+  @IsDate()
+  startDate: Date;
 
-  @IsDateString()
-  endDate: string;
+  @Type(() => Date)
+  @IsDate()
+  endDate: Date;
 
   @IsUUID()
   userId: string;

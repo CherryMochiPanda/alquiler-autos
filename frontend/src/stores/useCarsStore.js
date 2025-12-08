@@ -34,25 +34,31 @@ export const useCarsStore = defineStore('cars', () => {
   /**
    * Carga lista de autos
    */
-  async function fetchCars(filterOptions = {}) {
-    isLoading.value = true
-    try {
-      const result = await carsService.getCars(filterOptions)
+async function fetchCars(filterOptions = {}) {
+  isLoading.value = true
+  try {
+    const response = await carsService.getCars(filterOptions) 
+    if (response.success) { 
+      const normalizedCars = response.data.map(car => ({
+            ...car,
+            // Asigna la propiedad 'categoria' que espera el frontend
+            // usando el nombre de la categoría anidada del backend: car.category.name
+            categoria: car.category?.name || 'Sin Categoría', 
+        }));
 
-      if (result.success) {
-        cars.value = result.cars
-        return { success: true }
-      } else {
-        notificationStore.showError('Error al cargar vehículos')
-        return { success: false }
-      }
-    } catch (error) {
-      notificationStore.showError('Error de conexión')
+        cars.value = normalizedCars;
+      return { success: true }
+    } else {
+      notificationStore.showError('Error al cargar vehículos')
       return { success: false }
-    } finally {
-      isLoading.value = false
     }
+  } catch (error) {
+    notificationStore.showError('Error de conexión')
+    return { success: false }
+  } finally {
+    isLoading.value = false
   }
+}
 
   /**
    * Carga autos destacados
@@ -62,7 +68,7 @@ export const useCarsStore = defineStore('cars', () => {
       const result = await carsService.getFeaturedCars(limit)
 
       if (result.success) {
-        featuredCars.value = result.cars
+        featuredCars.value = result.data
         return { success: true }
       } else {
         return { success: false }
@@ -81,8 +87,8 @@ export const useCarsStore = defineStore('cars', () => {
       const result = await carsService.getCar(id)
 
       if (result.success) {
-        currentCar.value = result.car
-        return { success: true, car: result.car }
+        currentCar.value = result.data
+        return { success: true, car: result.data }
       } else {
         notificationStore.showError('Auto no encontrado')
         return { success: false }
@@ -103,9 +109,9 @@ export const useCarsStore = defineStore('cars', () => {
       const result = await carsService.createCar(carData)
 
       if (result.success) {
-        cars.value.push(result.car)
+        cars.value.push(result.data)
         notificationStore.showSuccess('Vehículo creado')
-        return { success: true, car: result.car }
+        return { success: true, car: result.data }
       } else {
         notificationStore.showError(result.error || 'Error al crear vehículo')
         return { success: false }
@@ -126,13 +132,13 @@ export const useCarsStore = defineStore('cars', () => {
       if (result.success) {
         const index = cars.value.findIndex(c => c.id === id)
         if (index !== -1) {
-          cars.value[index] = result.car
+          cars.value[index] = result.data
         }
         if (currentCar.value?.id === id) {
-          currentCar.value = result.car
+          currentCar.value = result.data
         }
         notificationStore.showSuccess('Vehículo actualizado')
-        return { success: true, car: result.car }
+        return { success: true, car: result.data }
       } else {
         notificationStore.showError(result.error || 'Error al actualizar')
         return { success: false }

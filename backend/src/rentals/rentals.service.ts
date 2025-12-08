@@ -62,6 +62,30 @@ export class RentalsService {
       throw new BadRequestException('La ubicación de entrega no existe');
     }
 
+    // Verificar si ya existe una renta que se solape en las fechas
+    const overlappingRental = await this.rentalRepository
+      .createQueryBuilder('rental')
+      .where('rental.carId = :carId', { carId: createRentalDto.carId })
+      .andWhere(
+        '(rental.status IN (:activeStatuses))', // Solo rentas activas o pendientes
+        { activeStatuses: ['PENDING', 'ACTIVE'] },
+      )
+      .andWhere(
+        // Condición de Solapamiento: [A, B] y [C, D] se solapan si A <= D y C <= B
+        '(:startDate < rental.endDate AND rental.startDate < :endDate)',
+        {
+          startDate: createRentalDto.startDate,
+          endDate: createRentalDto.endDate,
+        },
+      )
+      .getOne();
+
+    if (overlappingRental) {
+      throw new BadRequestException(
+        'El coche ya está reservado durante las fechas seleccionadas.',
+      );
+    }
+
     // Validar que la fecha de inicio sea al menos 24h en el futuro
     const now = new Date();
     const startDate = new Date(createRentalDto.startDate);
@@ -76,6 +100,12 @@ export class RentalsService {
 
     // Validar que la fecha de fin sea al menos 72h después del inicio
     const endDate = new Date(createRentalDto.endDate);
+    //VALIDAR DURACIÓN BÁSICA (End debe ser posterior a Start)
+    if (startDate >= endDate) {
+      throw new BadRequestException(
+        'La fecha de fin debe ser posterior a la fecha de inicio.',
+      );
+    }
     const hoursDifference =
       (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60);
 

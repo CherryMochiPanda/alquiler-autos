@@ -126,6 +126,15 @@ class ApiClient {
     } catch (e) {
       // Si no hay JSON, continuamos
     }
+    if (response.status === 304) {
+      return { success: true, data: data, status: response.status };
+    }
+    try {
+      if (response.status !== 204 || response.status !==304) {
+        data = await response.json();
+      }
+    } catch (e) {
+    }
 
     if (!response.ok) {
       const error = new Error(data.message || `HTTP ${response.status}`)

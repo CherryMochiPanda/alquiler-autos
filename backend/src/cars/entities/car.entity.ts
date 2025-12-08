@@ -24,7 +24,7 @@ export class Car {
   @Column('int')
   year: number;
 
-  @Column('decimal')
+  @Column('decimal', { precision: 10, scale: 2 }) // Total de 10 dígitos, 2 decimales (ej: 99,999,999.99)
   pricePerDay: number;
 
   @Column({ unique: true })

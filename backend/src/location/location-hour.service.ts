@@ -54,6 +54,13 @@ export class LocationHourService {
       );
     }
 
+    // Hora de Apertura < Hora de Cierre
+    if (createLocationHourDto.openTime >= createLocationHourDto.closeTime) {
+      throw new BadRequestException(
+        'La hora de cierre (closeTime) debe ser posterior a la hora de apertura (openTime).',
+      );
+    }
+
     const locationHour = this.locationHourRepository.create({
       ...createLocationHourDto,
       location,

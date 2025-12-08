@@ -30,6 +30,7 @@ import { AdminModule } from './admin/admin.module';
     }),
     TypeOrmModule.forFeature([User]),
     UsersModule,
+    CarsModule,
     RentalsModule,
     CategoryModule,
     ProvinceModule,

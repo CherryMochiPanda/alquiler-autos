@@ -6,27 +6,6 @@
 import apiClient from './apiClient'
 import { API_ENDPOINTS } from '../constants/app'
 
-const DEMO_USERS_KEY = 'demo_users'
-
-/**
- * Obtiene lista de usuarios demo
- */
-function getDemoUsers() {
-  try {
-    const users = localStorage.getItem(DEMO_USERS_KEY)
-    return users ? JSON.parse(users) : []
-  } catch (e) {
-    return []
-  }
-}
-
-/**
- * Guarda usuarios demo
- */
-function saveDemoUsers(users) {
-  localStorage.setItem(DEMO_USERS_KEY, JSON.stringify(users))
-}
-
 const adminService = {
   /**
    * Obtiene lista de todos los usuarios
