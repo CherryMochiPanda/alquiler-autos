@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+// ServeStatic handled in main.ts via NestExpressApplication
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';

@@ -22,4 +22,8 @@ export class CreateCarDto {
   @IsOptional()
   @IsBoolean()
   isAvailable?: boolean;
+
+  @IsOptional()
+  @IsString()
+  image?: string;
 }

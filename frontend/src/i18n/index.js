@@ -150,7 +150,7 @@ const messages = {
         role: 'Rol'
       },
       role: {
-        adminDemo: 'Admin (demo)',
+        adminDemo: 'Admin',
         user: 'Usuario'
       },
       logout: 'Cerrar sesión',
@@ -159,10 +159,10 @@ const messages = {
       savePhone: 'Guardar teléfono',
       cancelEdit: 'Cancelar',
       admin: {
-        add: 'Hacer admin (demo)',
-        remove: 'Quitar admin (demo)'
+        add: 'Hacer admin',
+        remove: 'Quitar admin'
       },
-      demoTitle: 'Iniciar sesión / Crear cuenta (demo)',
+      demoTitle: 'Iniciar sesión / Crear cuenta',
       placeholders: {
         name: 'Nombre',
         email: 'Correo electrónico',
@@ -173,9 +173,9 @@ const messages = {
       success: {
         passwordChanged: 'Contraseña actualizada'
       },
-      login: 'Iniciar sesión (demo)',
-      signup: 'Crear cuenta (demo)',
-      hint: 'Demo: cualquier email sirve. Si el correo contiene "admin" se marcará como admin.',
+      login: 'Iniciar sesión',
+      signup: 'Crear cuenta',
+      hint: '',
       errors: {
         formInvalid: 'Formulario inválido',
         userRequired: 'Introduce un usuario',
@@ -193,9 +193,9 @@ const messages = {
         message: 'Debes estar autenticado como administrador para ver esta página.'
       },
       backHome: 'Volver al inicio',
-      panelTitle: 'Panel de administración (demo)',
+      panelTitle: 'Panel de administración',
       users: {
-        title: 'Usuarios registrados (demo)',
+        title: 'Usuarios registrados',
         headers: {
           name: 'Nombre',
           email: 'Correo',
@@ -238,8 +238,8 @@ const messages = {
           saved: 'Vehículo {name} guardado.'
         }
       },
-      alertUserNowAdmin: '{email} ahora es admin (demo)',
-      alertUserRevoked: '{email} ya no es admin (demo)',
+      alertUserNowAdmin: '{email} ahora es admin',
+      alertUserRevoked: '{email} ya no es admin',
       refresh: 'Refrescar',
       exportUsers: 'Exportar usuarios',
       exportSuccess: 'Usuarios copiados al portapapeles',
@@ -378,7 +378,7 @@ const messages = {
         role: 'Role'
       },
       role: {
-        adminDemo: 'Admin (demo)',
+        adminDemo: 'Admin',
         user: 'User'
       },
       logout: 'Sign out',
@@ -387,10 +387,10 @@ const messages = {
       savePhone: 'Save phone',
       cancelEdit: 'Cancel',
       admin: {
-        add: 'Make admin (demo)',
-        remove: 'Remove admin (demo)'
+        add: 'Make admin',
+        remove: 'Remove admin'
       },
-      demoTitle: 'Sign in / Create account (demo)',
+      demoTitle: 'Sign in / Create account',
       placeholders: {
         name: 'Name',
         email: 'Email',
@@ -401,9 +401,9 @@ const messages = {
       success: {
         passwordChanged: 'Password updated'
       },
-      login: 'Sign in (demo)',
-      signup: 'Sign up (demo)',
-      hint: 'Demo: any email works. Email containing "admin" will be marked as admin.',
+      login: 'Sign in',
+      signup: 'Sign up',
+      hint: '',
       errors: {
         formInvalid: 'Please complete the form correctly',
         emailRequired: 'Please enter an email',
@@ -421,9 +421,9 @@ const messages = {
         message: 'You must be signed in as an administrator to view this page.'
       },
       backHome: 'Back to home',
-      panelTitle: 'Administration panel (demo)',
+      panelTitle: 'Administration panel',
       users: {
-        title: 'Registered users (demo)',
+        title: 'Registered users',
         headers: {
           name: 'Name',
           email: 'Email',
@@ -466,8 +466,8 @@ const messages = {
           saved: 'Vehicle {name} saved.'
         }
       },
-      alertUserNowAdmin: '{email} is now admin (demo)',
-      alertUserRevoked: '{email} is no longer admin (demo)',
+      alertUserNowAdmin: '{email} is now admin',
+      alertUserRevoked: '{email} is no longer admin',
       refresh: 'Refresh',
       exportUsers: 'Export users',
       exportSuccess: 'Users copied to clipboard',

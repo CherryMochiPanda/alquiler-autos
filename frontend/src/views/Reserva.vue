@@ -3,41 +3,33 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useNotification } from '../composables'
-import { autos } from '../data/autos'
-import { 
-  provinces, 
-  getMunicipalitiesByProvince, 
-  getOfficesByMunicipality,
-  checkDriverAvailability 
-} from '../data/locations'
+import locationService from '../services/locationService'
+import inventoryService from '../services/inventoryService'
+import { checkDriverAvailability } from '../data/locations'
 import { useAuth } from '../composables'
+import { useReservationsStore } from '../stores/useReservationsStore'
+import carsService from '../services/carsService'
 
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
 const notification = useNotification()
-const { isAuthenticated } = useAuth()
+const { isAuthenticated, user } = useAuth()
+const reservationsStore = useReservationsStore()
 
 // Auto selection
 const autoId = ref(route.query.auto)
 const autoSeleccionado = ref(null)
-const imagenActual = ref(0)
 
-onMounted(() => {
-  autoSeleccionado.value = autos.find(a => a.id === autoId.value) || null
+onMounted(async () => {
+  if (!autoId.value) return
+  const res = await carsService.getCar(autoId.value)
+  if (res && res.success && res.data) {
+    autoSeleccionado.value = res.data
+  } else {
+    autoSeleccionado.value = null
+  }
 })
-
-function siguiente() {
-  if (!autoSeleccionado.value || !autoSeleccionado.value.imagenes) return
-  const total = autoSeleccionado.value.imagenes.length
-  imagenActual.value = (imagenActual.value + 1) % total
-}
-
-function anterior() {
-  if (!autoSeleccionado.value || !autoSeleccionado.value.imagenes) return
-  const total = autoSeleccionado.value.imagenes.length
-  imagenActual.value = (imagenActual.value - 1 + total) % total
-}
 
 // Reservation form fields
 const provinceSelected = ref('')
@@ -45,9 +37,9 @@ const pickupOfficeSelected = ref('')
 const deliveryOfficeSelected = ref('')
 // Split date and time so date is selected via calendar and time can be edited
 const pickupDate = ref('')
-const pickupTime = ref('18:00')
+const pickupTime = ref('')
 const deliveryDate = ref('')
-const deliveryTime = ref('18:00')
+const deliveryTime = ref('')
 const driverCheckStatus = ref(null) // { available, message }
 const hireDriver = ref(false)
 
@@ -57,33 +49,51 @@ const hoyCadena = hoy.toISOString().split('T')[0]
 const minDias = 3
 const precioPorDia = 45
 
-// Computed properties for locations
-const availablePickupOffices = computed(() => {
-  if (!provinceSelected.value) return []
-  const allOffices = []
-  const munis = getMunicipalitiesByProvince(provinceSelected.value)
-  for (const mun of munis) {
-    const offices = getOfficesByMunicipality(mun.id)
-    allOffices.push(...offices)
-  }
-  return allOffices
-})
+// State for locations from API
+const provinces = ref([])
+const pickupOffices = ref([])
+const deliveryOffices = ref([])
+const allLocations = ref([])
+const inventoryMap = ref({}) // locationId -> stock
 
-const availableDeliveryOffices = computed(() => {
-  if (!provinceSelected.value) return []
-  const allOffices = []
-  const munis = getMunicipalitiesByProvince(provinceSelected.value)
-  for (const mun of munis) {
-    const offices = getOfficesByMunicipality(mun.id)
-    allOffices.push(...offices)
-  }
-  return allOffices
-})
-
-watch(provinceSelected, () => {
+watch(provinceSelected, async () => {
   pickupOfficeSelected.value = ''
   deliveryOfficeSelected.value = ''
   hireDriver.value = false
+  if (!provinceSelected.value) {
+    pickupOffices.value = []
+    return
+  }
+  // load locations in this province then filter by inventory availability for the car
+  const locsRes = await locationService.getLocationsByProvince(provinceSelected.value)
+  if (!locsRes.success) {
+    pickupOffices.value = []
+    return
+  }
+  const locs = locsRes.data || []
+  // filter locations that have inventory for the selected car (stock>0)
+  // If inventoryMap is empty (not yet loaded), fall back to showing all locations so user can continue selection.
+  const hasInventoryInfo = Object.keys(inventoryMap.value || {}).length > 0
+  const filtered = locs.filter(l => {
+    const stock = inventoryMap.value[l.id]
+    return stock && stock > 0
+  })
+  pickupOffices.value = hasInventoryInfo ? filtered : locs
+})
+
+// When inventory map becomes available later, re-filter pickupOffices if a province is selected
+watch(inventoryMap, () => {
+  if (!provinceSelected.value) return
+  ;(async () => {
+    const locsRes = await locationService.getLocationsByProvince(provinceSelected.value)
+    if (!locsRes.success) return
+    const locs = locsRes.data || []
+    const filtered = locs.filter(l => {
+      const stock = inventoryMap.value[l.id]
+      return stock && stock > 0
+    })
+    pickupOffices.value = filtered
+  })()
 })
 
 // Helper: combinar date + time en datetime ISO local
@@ -164,6 +174,89 @@ const driverAvailable = computed(() => {
   return driverCheckStatus.value && driverCheckStatus.value.available
 })
 
+// Hours validation: store hours for selected pickup/delivery locations
+const pickupLocationHours = ref(null)
+const deliveryLocationHours = ref(null)
+
+function timeToMinutes(t) {
+  if (!t) return null
+  const [h, m] = t.split(':').map(x => parseInt(x, 10))
+  return h * 60 + m
+}
+
+function isWithinLocationHours(hoursArray, dateStr, timeStr) {
+  if (!hoursArray || hoursArray.length === 0) return true // no restrictions
+  const d = new Date(dateStr + 'T' + timeStr)
+  const day = d.getDay() // 0..6
+  const entry = hoursArray.find(h => Number(h.dayOfWeek) === day)
+  if (!entry) return true // no hours for that day -> assume open
+  const open = timeToMinutes(entry.openTime)
+  const close = timeToMinutes(entry.closeTime)
+  const t = timeToMinutes(timeStr)
+  if (open === null || close === null || t === null) return true
+  return t >= open && t <= close
+}
+
+// Devuelve entry de hours para la fecha dada (día de la semana)
+function getHoursForDay(hoursArray, dateStr) {
+  if (!hoursArray || hoursArray.length === 0 || !dateStr) return null
+  const d = new Date(dateStr + 'T00:00')
+  const day = d.getDay()
+  return hoursArray.find(h => Number(h.dayOfWeek) === day) || null
+}
+
+const pickupDayHours = computed(() => getHoursForDay(pickupLocationHours.value || [], pickupDate.value))
+const deliveryDayHours = computed(() => getHoursForDay(deliveryLocationHours.value || [], deliveryDate.value))
+
+const pickupTimeMin = computed(() => (pickupDayHours.value ? pickupDayHours.value.openTime : null))
+const pickupTimeMax = computed(() => (pickupDayHours.value ? pickupDayHours.value.closeTime : null))
+const deliveryTimeMin = computed(() => (deliveryDayHours.value ? deliveryDayHours.value.openTime : null))
+const deliveryTimeMax = computed(() => (deliveryDayHours.value ? deliveryDayHours.value.closeTime : null))
+
+// Clamp times if user or draft provides out-of-range value
+watch(pickupTimeMin, (min) => {
+  if (!min || !pickupTime.value) return
+  if (pickupTime.value < min) pickupTime.value = min
+})
+watch(pickupTimeMax, (max) => {
+  if (!max || !pickupTime.value) return
+  if (pickupTime.value > max) pickupTime.value = max
+})
+watch(deliveryTimeMin, (min) => {
+  if (!min || !deliveryTime.value) return
+  if (deliveryTime.value < min) deliveryTime.value = min
+})
+watch(deliveryTimeMax, (max) => {
+  if (!max || !deliveryTime.value) return
+  if (deliveryTime.value > max) deliveryTime.value = max
+})
+
+watch([pickupOfficeSelected, pickupDate, pickupTime], async () => {
+  if (!pickupOfficeSelected.value) {
+    pickupLocationHours.value = null
+    return
+  }
+  const res = await locationService.getLocation(pickupOfficeSelected.value)
+  if (res.success && res.data) {
+    pickupLocationHours.value = res.data.hours || []
+  } else {
+    pickupLocationHours.value = null
+  }
+})
+
+watch([deliveryOfficeSelected, deliveryDate, deliveryTime], async () => {
+  if (!deliveryOfficeSelected.value) {
+    deliveryLocationHours.value = null
+    return
+  }
+  const res = await locationService.getLocation(deliveryOfficeSelected.value)
+  if (res.success && res.data) {
+    deliveryLocationHours.value = res.data.hours || []
+  } else {
+    deliveryLocationHours.value = null
+  }
+})
+
 const formValido = computed(() =>
   provinceSelected.value &&
   pickupOfficeSelected.value &&
@@ -174,14 +267,32 @@ const formValido = computed(() =>
   deliveryTime.value &&
   horasValidas.value &&
   diasValidos.value &&
-  driverAvailable.value
+  // Only require driver availability if the user opted to hire one
+  (!hireDriver.value || driverAvailable.value) &&
+  // validate pickup/delivery hours when hours are defined
+  isWithinLocationHours(pickupLocationHours.value || [], pickupDate.value, pickupTime.value) &&
+  isWithinLocationHours(deliveryLocationHours.value || [], deliveryDate.value, deliveryTime.value)
 )
+
+// Computed guards for sequential enabling
+const canSelectPickupOffice = computed(() => Boolean(provinceSelected.value))
+const canSelectDeliveryOffice = computed(() => Boolean(pickupOfficeSelected.value))
+const canSelectPickupDate = computed(() => Boolean(deliveryOfficeSelected.value))
+const canSelectPickupTime = computed(() => Boolean(pickupDate.value))
+const canSelectDeliveryDate = computed(() => Boolean(pickupTime.value))
+const canSelectDeliveryTime = computed(() => Boolean(deliveryDate.value))
 
 function goBack() {
   router.back()
 }
 
-function handleAddToCart() {
+async function handleAddToCart() {
+  // Validate form before proceeding
+  if (!formValido.value) {
+    notification.error('Formulario inválido: revisa los datos y horarios')
+    return
+  }
+
   // Si no está autenticado, guardar borrador y redirigir a login
   if (!isAuthenticated.value) {
     const draft = {
@@ -199,13 +310,34 @@ function handleAddToCart() {
     return
   }
 
-  // TODO: Guardar en carrito (Pinia store)
-  notification.success('Reserva agregada al carrito')
-  router.push('/catalogo')
+  // Guardar reserva en backend
+  const payload = {
+    startDate: pickupDateTime.value,
+    endDate: deliveryDateTime.value,
+    userId: user.value?.id,
+    carId: autoId.value,
+    pickupLocationId: pickupOfficeSelected.value,
+    dropoffLocationId: deliveryOfficeSelected.value,
+    hasDriver: hireDriver.value || false,
+    totalPrice: precioTotal.value
+  }
+
+  try {
+    const res = await reservationsStore.createReservation(payload)
+    if (res && res.success) {
+      notification.success('Reserva creada correctamente')
+      router.push('/account')
+    } else {
+      notification.error(res.error || 'No se pudo crear la reserva')
+    }
+  } catch (e) {
+    notification.error(e.message || 'Error al crear la reserva')
+  }
 }
 
 // Restaurar draft si existe
-onMounted(() => {
+onMounted(async () => {
+  // restore draft
   const raw = sessionStorage.getItem('reservationDraft')
   if (raw) {
     try {
@@ -215,14 +347,35 @@ onMounted(() => {
         pickupOfficeSelected.value = draft.pickupOfficeSelected || ''
         deliveryOfficeSelected.value = draft.deliveryOfficeSelected || ''
         pickupDate.value = draft.pickupDate || ''
-        pickupTime.value = draft.pickupTime || '18:00'
+        pickupTime.value = draft.pickupTime || ''
         deliveryDate.value = draft.deliveryDate || ''
-        deliveryTime.value = draft.deliveryTime || '18:00'
+        deliveryTime.value = draft.deliveryTime || ''
       }
     } catch (e) {
       // ignore
     }
     sessionStorage.removeItem('reservationDraft')
+  }
+
+  // load provinces
+  const provRes = await locationService.getProvinces()
+  provinces.value = provRes.success ? provRes.data : []
+
+  // load all locations for delivery list
+  const allRes = await locationService.getAllLocations()
+  allLocations.value = allRes.success ? allRes.data : []
+  deliveryOffices.value = allLocations.value
+
+  // if we have a car id, load inventory map for that car
+  if (autoId.value) {
+    const invRes = await inventoryService.getByCar(autoId.value)
+    if (invRes.success && Array.isArray(invRes.data)) {
+      const map = {}
+      for (const inv of invRes.data) {
+        map[inv.locationId] = inv.stock
+      }
+      inventoryMap.value = map
+    }
   }
 })
 </script>
@@ -234,19 +387,18 @@ onMounted(() => {
       <h3>{{ autoSeleccionado.nombre }}</h3>
       <div class="carousel">
         <img
-          :src="`/img/autos/${autoSeleccionado.carpeta}/${autoSeleccionado.imagenes[imagenActual]}`"
-          :alt="`Vista ${imagenActual + 1}`"
+          :src="autoSeleccionado.image || '/img/default-car.jpg'"
+          :alt="autoSeleccionado.brand + ' ' + autoSeleccionado.model"
         />
-        <div class="carousel-controls">
-          <button type="button" @click="anterior">‹</button>
-          <button type="button" @click="siguiente">›</button>
-        </div>
       </div>
       <ul>
-        <li><strong>Motor:</strong> {{ autoSeleccionado.motor }}</li>
-        <li><strong>Transmisión:</strong> {{ autoSeleccionado.transmision }}</li>
-        <li><strong>Capacidad:</strong> {{ autoSeleccionado.capacidad }} personas</li>
-        <li><strong>Extras:</strong> {{ autoSeleccionado.extras }}</li>
+        <li><strong>Marca / Modelo:</strong> {{ autoSeleccionado.brand }} {{ autoSeleccionado.model }}</li>
+        <li><strong>Año:</strong> {{ autoSeleccionado.year }}</li>
+        <li><strong>Placa:</strong> {{ autoSeleccionado.plate }}</li>
+        <li><strong>Categoría:</strong> {{ autoSeleccionado.category?.name || '—' }}</li>
+        <li><strong>Precio por día:</strong> ${{ autoSeleccionado.pricePerDay }}</li>
+        <li><strong>Disponibilidad:</strong> {{ autoSeleccionado.isAvailable ? 'Sí' : 'No' }}</li>
+        <li v-if="autoSeleccionado.reviews"><strong>Reseñas:</strong> {{ autoSeleccionado.reviews.length }} (media: {{ (autoSeleccionado.reviews.reduce((s,r)=>s+(r.rating||0),0)/ (autoSeleccionado.reviews.length||1)).toFixed(1) }})</li>
       </ul>
     </div>
 
@@ -265,19 +417,24 @@ onMounted(() => {
 
         <div class="form-group">
           <label>Lugar de Recogida</label>
-          <select v-model="pickupOfficeSelected" :disabled="!provinceSelected" required>
+          <select v-model="pickupOfficeSelected" :disabled="!canSelectPickupOffice || pickupOffices.length===0" required>
             <option value="">Selecciona oficina...</option>
-            <option v-for="office in availablePickupOffices" :key="office.id" :value="office.id">
+            <option v-for="office in pickupOffices" :key="office.id" :value="office.id">
               {{ office.name }}
             </option>
           </select>
+          <small v-if="pickupLocationHours && pickupLocationHours.length>0" class="info-msg">
+            Este local tiene horario. Horario para el día seleccionado:
+            <span v-if="pickupDayHours">{{ pickupDayHours.openTime }} - {{ pickupDayHours.closeTime }}</span>
+            <span v-else>Sin horario específico para el día seleccionado</span>
+          </small>
         </div>
 
         <div class="form-group">
           <label>Lugar de Entrega</label>
-          <select v-model="deliveryOfficeSelected" :disabled="!provinceSelected" required>
+          <select v-model="deliveryOfficeSelected" :disabled="!canSelectDeliveryOffice || deliveryOffices.length===0" required>
             <option value="">Selecciona oficina...</option>
-            <option v-for="office in availableDeliveryOffices" :key="office.id" :value="office.id">
+            <option v-for="office in deliveryOffices" :key="office.id" :value="office.id">
               {{ office.name }}
             </option>
           </select>
@@ -292,6 +449,7 @@ onMounted(() => {
                 v-model="pickupDate"
                 :min="getMinPickupDate()"
                 @keydown.prevent
+                :disabled="!canSelectPickupDate"
                 required
               />
             </div>
@@ -299,6 +457,9 @@ onMounted(() => {
               <input
                 type="time"
                 v-model="pickupTime"
+                :disabled="!canSelectPickupTime"
+                :min="pickupTimeMin || undefined"
+                :max="pickupTimeMax || undefined"
                 required
                 class="datetime-input"
               />
@@ -306,6 +467,9 @@ onMounted(() => {
           </div>
           <small v-if="pickupDateTime" class="info-msg">
             Seleccionado: {{ new Date(pickupDateTime).toLocaleString('es-CU') }}
+          </small>
+          <small v-if="pickupLocationHours && pickupDateTime && !isWithinLocationHours(pickupLocationHours, pickupDate.value, pickupTime.value)" class="error-msg">
+            La hora seleccionada no está dentro del horario de atención del local seleccionado.
           </small>
         </div>
 
@@ -318,6 +482,7 @@ onMounted(() => {
                 v-model="deliveryDate"
                 :min="getMinDeliveryDate()"
                 @keydown.prevent
+                :disabled="!canSelectDeliveryDate"
                 required
               />
             </div>
@@ -325,13 +490,24 @@ onMounted(() => {
               <input
                 type="time"
                 v-model="deliveryTime"
+                :disabled="!canSelectDeliveryTime"
+                :min="deliveryTimeMin || undefined"
+                :max="deliveryTimeMax || undefined"
                 required
                 class="datetime-input"
               />
             </div>
           </div>
+          <small v-if="deliveryLocationHours && deliveryLocationHours.length>0" class="info-msg">
+            Este local tiene horario. Horario para el día seleccionado:
+            <span v-if="deliveryDayHours">{{ deliveryDayHours.openTime }} - {{ deliveryDayHours.closeTime }}</span>
+            <span v-else>Sin horario específico para el día seleccionado</span>
+          </small>
           <small v-if="deliveryDateTime" class="info-msg">
             Seleccionado: {{ new Date(deliveryDateTime).toLocaleString('es-CU') }}
+          </small>
+          <small v-if="deliveryLocationHours && deliveryDateTime && !isWithinLocationHours(deliveryLocationHours, deliveryDate.value, deliveryTime.value)" class="error-msg">
+            La hora seleccionada no está dentro del horario de atención del local de entrega.
           </small>
           <small v-if="deliveryDateTime && !diasValidos" class="error-msg">
             Mínimo {{ minDias }} días de renta (actualmente {{ dias }} días)
@@ -358,7 +534,7 @@ onMounted(() => {
           <button type="button" @click="goBack" class="btn-back">
             ← Regresar
           </button>
-          <button type="submit" class="btn-submit">
+          <button type="submit" class="btn-submit" :disabled="!formValido">
             Agregar al Carrito
           </button>
         </div>

@@ -33,6 +33,10 @@ export class Car {
   @Column({ default: true })
   isAvailable: boolean;
 
+  // Imagen única del auto
+  @Column({ nullable: true })
+  image?: string;
+
   // Relación N:1 a Categoría
   @ManyToOne(() => Category, (category) => category.cars)
   category: Category;

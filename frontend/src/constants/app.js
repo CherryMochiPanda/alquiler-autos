@@ -38,8 +38,8 @@ export const HTTP_STATUS = {
 export const STORAGE_KEYS = {
   CURRENT_USER: 'currentUser',
   AUTH_TOKEN: 'authToken',
-  AUTOS: 'demo_cars',
-  USERS: 'demo_users'
+  AUTOS: 'autos',
+  USERS: 'users'
 }
 
 export const API_ENDPOINTS = {
@@ -66,10 +66,10 @@ export const API_ENDPOINTS = {
     STATS: '/api/admin/stats'
   },
   RESERVATIONS: {
-    GET_ALL: '/api/reservations',
-    CREATE: '/api/reservations',
-    UPDATE: '/api/reservations/:id',
-    CANCEL: '/api/reservations/:id/cancel'
+    GET_ALL: '/api/rentals',
+    CREATE: '/api/rentals',
+    UPDATE: '/api/rentals/:id',
+    CANCEL: '/api/rentals/:id/status'
   }
 }
 

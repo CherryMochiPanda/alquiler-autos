@@ -153,7 +153,7 @@ export const offices = {
 }
 
 /**
- * Conductores disponibles por oficina y rango de fechas (demo)
+ * Conductores disponibles por oficina y rango de fechas (simulado)
  */
 export const driverAvailability = {
   playa_5ta_av: { total: 5, booked: [] },

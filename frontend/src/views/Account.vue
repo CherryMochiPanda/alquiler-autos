@@ -5,6 +5,7 @@
       <p><strong>{{ t('account.labels.name') }}:</strong> {{ user?.firstName }} {{ user?.lastName }}</p>
       <p><strong>{{ t('account.labels.email') }}:</strong> {{ user?.email }}</p>
       <p><strong>{{ t('account.labels.role') }}:</strong> {{ isAdmin ? t('account.role.adminDemo') : t('account.role.user') }}</p>
+      <p><strong>{{ t('account.labels.phone') }}:</strong> {{ user?.phone || user?.phoneNumber || phone }}</p>
 
       <!-- Edit Phone Section -->
       <div class="edit-phone form-row">
@@ -12,9 +13,11 @@
         <div class="phone-row">
           <input class="input" v-model="phone" type="tel" :disabled="!editingPhone" placeholder="+53 00000000" @input="onAccountPhoneInput" />
           <div class="form-actions">
-            <button v-if="editingPhone" class="btn-primary" @click="savePhone">{{ $t('account.savePhone') }}</button>
-            <button v-if="editingPhone" class="btn-secondary" @click="cancelEdit">{{ $t('account.cancelEdit') }}</button>
-            <button v-else class="btn-secondary" @click="editingPhone = true">{{ $t('account.editPhone') }}</button>
+            <button v-if="editingPhone" class="btn-primary" @click="savePhone" :disabled="phoneSaving">
+              {{ phoneSaving ? 'Guardando...' : $t('account.savePhone') }}
+            </button>
+            <button v-if="editingPhone" class="btn-secondary" @click="cancelEdit" :disabled="phoneSaving">{{ $t('account.cancelEdit') }}</button>
+            <button v-else class="btn-secondary" @click="startEditPhone">{{ $t('account.editPhone') }}</button>
           </div>
         </div>
       </div>
@@ -22,11 +25,19 @@
       <!-- Change Password Section -->
       <div class="change-password form-row">
         <label>{{ $t('account.changePassword') }}</label>
-        <div class="pw-grid">
+
+        <div v-if="!showPasswordReset" class="pw-action">
+          <button class="btn-secondary" @click="showPasswordReset = true">Restablecer contraseña</button>
+        </div>
+
+        <div v-else class="pw-grid">
           <input class="input" v-model="password" type="password" :placeholder="$t('account.placeholders.password')" />
           <input class="input" v-model="confirmPassword" type="password" :placeholder="$t('signup.placeholders.confirmPassword')" />
           <div class="form-actions">
-            <button class="btn-primary" @click="updatePassword">{{ $t('account.savePassword') }}</button>
+            <button class="btn-primary" @click="updatePassword" :disabled="passwordSaving">
+              {{ passwordSaving ? 'Guardando...' : $t('account.savePassword') }}
+            </button>
+            <button class="btn-secondary" @click="cancelPasswordReset" :disabled="passwordSaving">{{ $t('account.cancelEdit') }}</button>
           </div>
         </div>
       </div>
@@ -38,7 +49,7 @@
       </div>
 
       <div class="profile-actions">
-        <button @click="handleLogout" :disabled="isLoading">{{ $t('account.logout') }}</button>
+        <button type="button" @click="handleLogout" :disabled="isLoading">{{ $t('account.logout') }}</button>
       </div>
     </div>
 
@@ -193,26 +204,28 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuth, useForm, useNotification } from '../composables'
-import { useAdminStore } from '../stores'
 import UserReservations from './UserReservations.vue'
 
 const router = useRouter()
 const { t } = useI18n()
 const { user, isAuthenticated, isAdmin, isLoading, login, logout, signup, updateProfile, changePassword } = useAuth()
 const notification = useNotification()
-const adminStore = useAdminStore()
+// adminStore not required in this view
 
 const activeTab = ref('login')
 const phone = ref(user.value?.phone || '')
 // small phone form validator
 const phoneForm = useForm({ phone: phone.value })
 const editingPhone = ref(false)
+const phoneSaving = ref(false)
 const password = ref('')
 const confirmPassword = ref('')
+const passwordSaving = ref(false)
+const showPasswordReset = ref(false)
 
 // Formulario de login
 const loginForm = useForm(
@@ -346,21 +359,52 @@ function viewReservations() {
 }
 
 function savePhone() {
-  // validate phone same as signup
+//validar telefono
   phoneForm.setFieldValue('phone', phone.value)
   if (!phoneForm.validateField('phone', phone.value)) {
     notification.error(phoneForm.getFieldError('phone') || t('reserva.errors.phone'))
     return
   }
 
-  updateProfile({ phone: phone.value })
-  notification.success(t('account.savePhone'))
-  editingPhone.value = false
+  phoneSaving.value = true
+  updateProfile({ phoneNumber: phone.value })
+    .then((res) => {
+      if (res && res.success) {
+        notification.success(t('account.savePhone'))
+        editingPhone.value = false
+      } else {
+        notification.error(res?.error || 'Error al guardar teléfono')
+      }
+    })
+    .catch(() => notification.error('Error al guardar teléfono'))
+    .finally(() => {
+      phoneSaving.value = false
+    })
 }
 
 function cancelEdit() {
-  phone.value = user.value?.phone || ''
+  phone.value = user.value?.phone || user.value?.phoneNumber || ''
   editingPhone.value = false
+}
+
+function startEditPhone() {
+  // preload current phone from user into the input before enabling edit
+  phone.value = user.value?.phone || user.value?.phoneNumber || ''
+  editingPhone.value = true
+}
+
+// Keep phone in sync with user data when not editing
+watch(user, (u) => {
+  if (!editingPhone.value) {
+    phone.value = u?.phone || u?.phoneNumber || ''
+  }
+})
+
+function cancelPasswordReset() {
+  password.value = ''
+  confirmPassword.value = ''
+  showPasswordReset.value = false
+  passwordSaving.value = false
 }
 
 function updatePassword() {
@@ -368,10 +412,27 @@ function updatePassword() {
     notification.error(t('account.errors.passwordMismatch'))
     return
   }
+  if (!password.value || password.value.length < 8) {
+    notification.error(t('account.errors.passInvalid') || 'Contraseña inválida')
+    return
+  }
+
+  passwordSaving.value = true
   changePassword(password.value)
-  notification.success(t('account.success.passwordChanged'))
-  password.value = ''
-  confirmPassword.value = ''
+    .then((res) => {
+      if (res && res.success) {
+        notification.success(t('account.success.passwordChanged'))
+        password.value = ''
+        confirmPassword.value = ''
+        showPasswordReset.value = false
+      } else {
+        notification.error(res?.error || 'Error al actualizar contraseña')
+      }
+    })
+    .catch(() => notification.error('Error al actualizar contraseña'))
+    .finally(() => {
+      passwordSaving.value = false
+    })
 }
 // toggleAdmin removed: admin role must be managed from Admin panel
 </script>

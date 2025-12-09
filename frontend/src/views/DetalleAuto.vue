@@ -1,16 +1,9 @@
 <template>
   <div v-if="autoSeleccionado" class="detalle-auto">
-    <h2>{{ autoSeleccionado.nombre }}</h2>
+    <h2>{{ title }}</h2>
 
     <div class="carousel">
-      <img
-        :src="`/img/autos/${autoSeleccionado.carpeta}/${autoSeleccionado.imagenes[imagenActual]}`"
-        :alt="`Vista ${imagenActual + 1}`"
-      />
-      <div class="carousel-controls">
-        <button @click="anterior">‹</button>
-        <button @click="siguiente">›</button>
-      </div>
+      <img :src="displayImage" :alt="title" />
     </div>
 
     <ul class="auto-info">
@@ -18,6 +11,8 @@
       <li><strong>{{ $t('detalle.labels.transmission') }}:</strong> {{ autoSeleccionado.transmision }}</li>
       <li><strong>{{ $t('detalle.labels.capacity') }}:</strong> {{ autoSeleccionado.capacidad }} {{ $t('detalle.labels.people') }}</li>
       <li><strong>{{ $t('detalle.labels.extras') }}:</strong> {{ autoSeleccionado.extras }}</li>
+      <li><strong>Categoría:</strong> {{ autoSeleccionado.category?.name || '—' }}</li>
+      <li v-if="availableLocations.length"><strong>Disponible en:</strong> {{ availableLocations.join(', ') }}</li>
     </ul>
 
     <button class="reservar-btn" @click="$router.push({ path: '/reservar', query: { auto: autoSeleccionado.id } })">
@@ -33,29 +28,52 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { autos } from '../data/autos'
-
+import carsService from '../services/carsService'
+import inventoryService from '../services/inventoryService'
 
 const route = useRoute()
 const autoId = ref(route.query.auto)
 const autoSeleccionado = ref(null)
-const imagenActual = ref(0)
+const availableLocations = ref([])
 
-onMounted(() => {
-  autoSeleccionado.value = autos.find(a => a.id === autoId.value)
+onMounted(async () => {
+  if (!autoId.value) return
+  const res = await carsService.getCar(autoId.value)
+  if (res && res.success && res.data) {
+    autoSeleccionado.value = res.data
+  } else {
+    autoSeleccionado.value = null
+  }
+
+  // load inventory locations for this car
+  if (autoId.value) {
+    const invRes = await inventoryService.getByCar(autoId.value)
+    if (invRes.success && Array.isArray(invRes.data)) {
+      // invRes.data contains inventory entries with location relation
+      availableLocations.value = invRes.data.filter(i => i.stock > 0).map(i => i.location?.name || i.locationId)
+    }
+  }
 })
 
-function siguiente() {
-  const total = autoSeleccionado.value.imagenes.length
-  imagenActual.value = (imagenActual.value + 1) % total
-}
+const title = computed(() => {
+  if (!autoSeleccionado.value) return ''
+  const a = autoSeleccionado.value
+  if (a.brand && a.model) return `${a.brand} ${a.model}`
+  return a.nombre || 'Auto'
+})
 
-function anterior() {
-  const total = autoSeleccionado.value.imagenes.length
-  imagenActual.value = (imagenActual.value - 1 + total) % total
-}
+const displayImage = computed(() => {
+  const a = autoSeleccionado.value
+  if (!a) return '/img/autos/default.jpg'
+  if (a.image) return a.image
+  const img = (a.imagenes && a.imagenes[0]) || ''
+  if (!img) return '/img/autos/default.jpg'
+  if (img.startsWith('/')) return img
+  if (a.carpeta) return `/img/autos/${a.carpeta}/${img}`
+  return `/img/autos/${img}`
+})
 </script>
 
 <style scoped>

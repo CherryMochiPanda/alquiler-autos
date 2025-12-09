@@ -86,13 +86,24 @@
 </template>
 <script setup>
 import CarCard from '../components/CarCard.vue'
-import { autos } from '../data/autos'
+import carsService from '../services/carsService'
 import { useRouter } from 'vue-router'
 import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
 const { t } = useI18n()
+
+const featuredAutos = ref([])
+
+onMounted(async () => {
+  const res = await carsService.getFeaturedCars(3)
+  if (res.success && Array.isArray(res.data)) {
+    featuredAutos.value = res.data
+  } else {
+    featuredAutos.value = []
+  }
+})
 
 // timeline control
 const progress = ref(0) // 0..1 (kept for possible UI debugging)
@@ -283,15 +294,6 @@ onUnmounted(() => {
   window.removeEventListener('resize', computeStepPositions)
   if (timelineSteps.value) timelineSteps.value.removeEventListener('scroll', computeStepPositions)
 })
-
-// derive featured autos from localStorage (admin can set destacado) or fallback to data file
-const localAutos = JSON.parse(localStorage.getItem('autos') || 'null') || autos
-let featuredAutos = (localAutos.filter(a => a.destacado)).slice(0, 3)
-// fallback older behavior: if none marked, pick the default ids
-if (!featuredAutos.length) {
-  const ids = ['sedan', 'suv', 'deportivo']
-  featuredAutos = ids.map(id => localAutos.find(a => a.id === id)).filter(Boolean)
-}
 
 function viewCar(id) {
   router.push({ path: '/detalle-auto', query: { auto: id } })

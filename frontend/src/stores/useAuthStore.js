@@ -127,6 +127,12 @@ export const useAuthStore = defineStore('auth', () => {
 
     try {
       user.value = { ...user.value, ...updates }
+      // Persist updated user locally so changes (ej. teléfono) survive reload/login
+      try {
+        localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user.value))
+      } catch (e) {
+        // ignore storage errors
+      }
       // TODO: Llamar a authService.updateProfile cuando esté disponible en API
       notificationStore.showSuccess('Perfil actualizado')
       return { success: true, user: user.value }

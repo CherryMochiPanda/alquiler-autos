@@ -58,10 +58,13 @@ class ApiClient {
    */
   async post(endpoint, data = {}) {
     try {
+      const isForm = data instanceof FormData
+      const headers = this.getHeaders()
+      if (isForm) delete headers['Content-Type']
       const response = await fetch(`${this.baseURL}${endpoint}`, {
         method: 'POST',
-        headers: this.getHeaders(),
-        body: JSON.stringify(data)
+        headers,
+        body: isForm ? data : JSON.stringify(data)
       })
       return this.handleResponse(response)
     } catch (error) {
@@ -74,10 +77,13 @@ class ApiClient {
    */
   async put(endpoint, data = {}) {
     try {
+      const isForm = data instanceof FormData
+      const headers = this.getHeaders()
+      if (isForm) delete headers['Content-Type']
       const response = await fetch(`${this.baseURL}${endpoint}`, {
         method: 'PUT',
-        headers: this.getHeaders(),
-        body: JSON.stringify(data)
+        headers,
+        body: isForm ? data : JSON.stringify(data)
       })
       return this.handleResponse(response)
     } catch (error) {
@@ -90,10 +96,13 @@ class ApiClient {
    */
   async patch(endpoint, data = {}) {
     try {
+      const isForm = data instanceof FormData
+      const headers = this.getHeaders()
+      if (isForm) delete headers['Content-Type']
       const response = await fetch(`${this.baseURL}${endpoint}`, {
         method: 'PATCH',
-        headers: this.getHeaders(),
-        body: JSON.stringify(data)
+        headers,
+        body: isForm ? data : JSON.stringify(data)
       })
       return this.handleResponse(response)
     } catch (error) {

@@ -7,28 +7,6 @@
 import apiClient from './apiClient'
 import { API_ENDPOINTS, STORAGE_KEYS } from '../constants/app'
 
-// Demo: Simula almacenamiento de usuarios registrados
-const DEMO_USERS_KEY = 'demo_users'
-
-/**
- * Obtiene lista de usuarios demo (simulación)
- */
-function getDemoUsers() {
-  try {
-    const users = localStorage.getItem(DEMO_USERS_KEY)
-    return users ? JSON.parse(users) : []
-  } catch (e) {
-    return []
-  }
-}
-
-/**
- * Guarda usuarios demo (simulación)
- */
-function saveDemoUsers(users) {
-  localStorage.setItem(DEMO_USERS_KEY, JSON.stringify(users))
-}
-
 const authService = {
   /**
    * Login - Intenta autenticar usuario

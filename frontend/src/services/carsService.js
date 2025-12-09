@@ -5,10 +5,6 @@
 
 import apiClient from './apiClient'
 import { API_ENDPOINTS } from '../constants/app'
-import { autos as demoAutos } from '../data/autos'
-
-// Simulación: almacena autos editados en localStorage
-const DEMO_CARS_KEY = 'demo_cars'
 
 const carsService = {
   /**
@@ -44,7 +40,7 @@ try {
       if (!result.success) {
         return { success: false, error: result.error }
       }
-      return result.data
+      return { success: true, data: result.data }
     } catch (error) {
       return { success: false, error: error.message }
     }
@@ -64,7 +60,7 @@ try {
       if (!result.success) {
         return { success: false, error: result.error }
       }
-      return result.data
+      return { success: true, data: result.data }
     } catch (error) {
       return { success: false, error: error.message }
     }
@@ -84,7 +80,24 @@ try {
       if (!result.success) {
         return { success: false, error: result.error }
       }
-      return result.data
+      return { success: true, data: result.data }
+    } catch (error) {
+      return { success: false, error: error.message }
+    }
+  },
+
+  /**
+   * Actualiza un auto (soporta FormData con imagen)
+   * @param {string} id
+   * @param {object|FormData} carData
+   */
+  async updateCar(id, carData) {
+    try {
+      const result = await apiClient.patch(`${API_ENDPOINTS.CARS.UPDATE}/${id}`, carData)
+      if (!result.success) {
+        return { success: false, error: result.error }
+      }
+      return { success: true, data: result.data }
     } catch (error) {
       return { success: false, error: error.message }
     }
@@ -104,7 +117,7 @@ try {
       if (!result.success) {
         return { success: false, error: result.error }
       }
-      return result.data
+      return { success: true, data: result.data }
     } catch (error) {
       return { success: false, error: error.message }
     }

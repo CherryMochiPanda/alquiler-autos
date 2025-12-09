@@ -1,7 +1,7 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { autos } from '../data/autos'
+import carsService from '../services/carsService'
 import { useI18n } from 'vue-i18n'
 import CarCard from '../components/CarCard.vue'
 
@@ -17,26 +17,23 @@ function inferCategory(a) {
 }
 
 
-const imagenActual = ref({})
-autos.forEach(auto => {
-  imagenActual.value[auto.id] = 0
+const items = ref([])
+
+onMounted(async () => {
+  const res = await carsService.getCars()
+  if (res.success && Array.isArray(res.data)) {
+    items.value = res.data
+  } else {
+    // leave items empty or fetch demo data if necessary
+    items.value = []
+  }
 })
-
-function siguiente(id) {
-  const total = autos.find(a => a.id === id).imagenes.length
-  imagenActual.value[id] = (imagenActual.value[id] + 1) % total
-}
-
-function anterior(id) {
-  const total = autos.find(a => a.id === id).imagenes.length
-  imagenActual.value[id] = (imagenActual.value[id] - 1 + total) % total
-}
 
 // agrupar por categoria
 const grouped = computed(() => {
   const map = {}
-  autos.forEach(a => {
-    const cat = inferCategory(a)
+  items.value.forEach(a => {
+    const cat = a.category?.name || inferCategory(a)
     if (!map[cat]) map[cat] = []
     map[cat].push(a)
   })
@@ -62,7 +59,7 @@ function backToCatalog() {
     <template v-if="!selectedCategory">
       <div class="category-list">
         <div v-for="(items, cat) in grouped" :key="cat" class="category-block">
-          <h3>{{ t(`catalog.categories.${cat}`) || cat }}</h3>
+          <h3>{{ cat }}</h3>
           <div class="catalogo-grid">
             <CarCard v-for="auto in items.slice(0, previewLimit)" :key="auto.id" :auto="auto" @view="id => $router.push({ path: '/detalle-auto', query: { auto: id } })" />
           </div>
@@ -75,7 +72,7 @@ function backToCatalog() {
 
     <template v-else>
       <div class="category-full">
-        <h3>{{ t(`catalog.categories.${selectedCategory}`) || selectedCategory }}</h3>
+        <h3>{{ selectedCategory }}</h3>
         <div class="catalogo-grid">
           <CarCard v-for="auto in grouped[selectedCategory] || []" :key="auto.id" :auto="auto" :showReserve="true" @view="id => $router.push({ path: '/detalle-auto', query: { auto: id } })" @reserve="id => $router.push({ path: '/reservar', query: { auto: id } })" />
         </div>

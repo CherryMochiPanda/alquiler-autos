@@ -42,6 +42,7 @@ export class CarsService {
       ...createCarDto,
       category,
       isAvailable: createCarDto.isAvailable !== false,
+      image: createCarDto.image,
     });
 
     return this.carRepository.save(car);
@@ -73,6 +74,14 @@ export class CarsService {
     });
   }
 
+  async findFeatured(limit = 3): Promise<Car[]> {
+    const take = typeof limit === 'number' && limit > 0 ? limit : 3;
+    return this.carRepository.find({
+      take,
+      relations: ['category', 'rentals', 'reviews', 'inventory'],
+    });
+  }
+
   async update(id: string, updateCarDto: UpdateCarDto): Promise<Car> {
     const car = await this.findOne(id);
 
@@ -100,6 +109,9 @@ export class CarsService {
       car.category = category;
     }
 
+    if (updateCarDto.image) {
+      car.image = updateCarDto.image;
+    }
     Object.assign(car, updateCarDto);
     return this.carRepository.save(car);
   }

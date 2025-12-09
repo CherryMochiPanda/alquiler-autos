@@ -26,6 +26,9 @@
             <span>{{ $t('admin.cars.title') }}</span>
             <span class="badge">{{ cars.length }}</span>
           </button>
+          <button @click="activeTab = 'reports'" :class="{ active: activeTab === 'reports' }" class="tab-btn">
+            <span>{{ $t('admin.reports.title') }}</span>
+          </button>
           <button @click="refreshData" class="btn-secondary">{{ $t('admin.refresh') }}</button>
         </div>
       </div>

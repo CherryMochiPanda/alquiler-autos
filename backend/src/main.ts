@@ -1,10 +1,12 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
+import { join } from 'path';
 import { AppModule } from './app.module';
 import { AdminUserSeeder } from './database/seeders/admin-user.seeder';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // Habilitar validación automática de DTOs
   app.useGlobalPipes(
@@ -28,6 +30,10 @@ async function bootstrap() {
   const seeder = app.get(AdminUserSeeder);
   await seeder.seed();
 
+  // Servir archivos estáticos (imágenes de autos)
+  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+    prefix: '/uploads',
+  });
   const port = process.env.PORT ?? 3000;
   await app.listen(port);
   // Log simple para facilitar debugging al iniciar

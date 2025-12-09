@@ -123,7 +123,7 @@ const local = reactive({
   isAvailable: props.model?.isAvailable !== undefined ? props.model.isAvailable : true, 
   
   coverFile: null, 
-  coverUrl: props.model?.cover || '', 
+  coverUrl: props.model?.image || '', 
   
   destacado: props.model?.destacado || false, 
 })
@@ -230,7 +230,8 @@ async function onSave() {
 
   // New Files
   if (local.coverFile) {
-    formData.append('cover', local.coverFile) 
+    // backend expects field name 'image'
+    formData.append('image', local.coverFile) 
   }
 
   isSaving.value = true
